@@ -1,1 +1,5 @@
-
+promo/
+build/
+.vscode/
+node_modules
+profiles/
