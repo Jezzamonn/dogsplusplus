@@ -1,5 +1,6 @@
 import { PHYSICS_SCALE } from "./constants";
 import { Level } from "./level";
+import * as Images from "../images";
 
 export class Game {
 
@@ -11,7 +12,7 @@ export class Game {
     level: Level;
 
     constructor() {
-        this.level = new Level(this);
+        this.level = new Level(this, Images.images["testlevel"].image!);
     }
 
     update(dt: number): void {

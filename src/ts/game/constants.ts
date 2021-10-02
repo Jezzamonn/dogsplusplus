@@ -5,6 +5,11 @@ import { seededRandom } from "../util";
 // PX = Actual pixels (well, aside from other scaling of the game.)
 // PHYS = The fixed point thing the game physics works with.
 
+export interface Point {
+    x: number;
+    y: number;
+}
+
 export const PHYSICS_SCALE = 8;
 export const DEFAULT_PIXEL_SCALE = 3;
 

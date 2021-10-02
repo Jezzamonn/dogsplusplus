@@ -1,5 +1,6 @@
 import { Game } from "./game/game";
 import * as Aseprite from "./aseprite-js";
+import * as Images from "./images";
 
 const timeStep = 1 / 60;
 
@@ -7,11 +8,13 @@ let canvas: HTMLCanvasElement;
 let context: CanvasRenderingContext2D;
 let game: Game;
 
-function init(): void {
+async function init() {
     canvas = document.querySelector('.canvas') as HTMLCanvasElement;
     context = canvas.getContext('2d')!;
 
     Aseprite.disableSmoothing(context);
+
+    await loadAllImages();
 
     game = new Game();
 
@@ -34,6 +37,10 @@ function render() {
     context.resetTransform();
 
     game.render(context);
+}
+
+async function loadAllImages() {
+    await Images.loadImage({name: "testlevel", path: "levels/", extension: "gif"});
 }
 
 

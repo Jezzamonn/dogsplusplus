@@ -1,8 +1,10 @@
 import { lerp } from "../util";
-import { physFromPixelArt, rng } from "./constants";
+import { physFromPixelArt, PHYSICS_SCALE, Point, rng } from "./constants";
 import { Entity } from "./entity/entity";
 import { Player } from "./entity/player";
 import { Game } from "./game";
+
+const TILE_SIZE = 10;
 
 export enum Tile {
     AIR,
@@ -10,13 +12,12 @@ export enum Tile {
 }
 
 export class Level {
-
     game: Game;
 
     entities: Entity[] = [];
     tiles: Tile[][] = [];
 
-    constructor(game: Game) {
+    constructor(game: Game, image: HTMLImageElement) {
         this.game = game;
 
         for (let i = 0; i < 20; i++) {
@@ -27,6 +28,55 @@ export class Level {
             ent.h = physFromPixelArt(5);
             this.entities.push(ent);
         }
+
+        this.initFromImage(image);
+    }
+
+    initFromImage(image: HTMLImageElement): void {
+        // Init with empty stuff.
+        for (let y = 0; y < image.height; y++) {
+            const tileRow: Tile[] = [];
+            for (let x = 0; x < image.width; x++) {
+                tileRow[x] = Tile.AIR;
+            }
+            this.tiles.push(tileRow);
+        }
+
+        // Gotta draw it to a canvas to get the pixels
+        const canvas = document.createElement("canvas");
+        canvas.width = image.width;
+        canvas.height = image.height;
+        const context = canvas.getContext("2d")!;
+        context.drawImage(image, 0, 0, image.width, image.height);
+
+        for (let y = 0; y < image.height; y++) {
+            for (let x = 0; x < image.width; x++) {
+                const colorString = pixelColorString(context, x, y);
+
+                if (colorString != 'ffffff') {
+                    this.tiles[y][x] = Tile.GROUND;
+                }
+            }
+        }
+    }
+
+    get width() {
+        return this.tiles[0].length;
+    }
+
+    get height() {
+        return this.tiles.length;
+    }
+
+
+    getTile({x, y}: Point) {
+        if (y < 0) {
+            return Tile.AIR;
+        }
+        if (x < 0 || x >= this.width || y >= this.height) {
+            return Tile.GROUND;
+        }
+        return this.tiles[y][x];
     }
 
     update(dt: number): void {
@@ -36,9 +86,44 @@ export class Level {
     }
 
     render(context: CanvasRenderingContext2D): void {
+        this.renderTiles(context);
+
         for (const entity of this.entities) {
             entity.render(context);
         }
     }
 
+    renderTiles(context: CanvasRenderingContext2D) {
+        const extraTiles = 8;
+        for (let y = -extraTiles; y < this.height + extraTiles; y++) {
+            for (let x = -extraTiles; x < this.width + extraTiles; x++) {
+                const tile = this.getTile({x, y});
+
+                this.renderTile(context, tile, {x, y})
+            }
+        }
+    }
+
+    renderTile(context: CanvasRenderingContext2D, tile: Tile, renderPos: Point) {
+        if (tile == Tile.AIR) {
+            return;
+        }
+        const PX_TILE_SIZE = TILE_SIZE * PHYSICS_SCALE;
+
+        context.fillStyle = '#33984b';
+        context.fillRect(PX_TILE_SIZE * renderPos.x, PX_TILE_SIZE * renderPos.y, PX_TILE_SIZE, PX_TILE_SIZE);
+    }
+}
+
+function pixelColorString(context: CanvasRenderingContext2D, x: number, y: number): string {
+    const colorArray = context.getImageData(x, y, 1, 1);
+    return Array.from(colorArray.data.slice(0, 3))
+        .map((d) => d.toString(16))
+        .map((s) => {
+            while (s.length < 2) {
+                s = "0" + s;
+            }
+            return s;
+        })
+        .join("");
 }
