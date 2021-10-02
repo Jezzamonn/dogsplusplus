@@ -1,10 +1,35 @@
+import { Level } from "../level";
+
 export class Entity {
+
+    level: Level;
+
     x: number = 0;
     y: number = 0;
     w: number = 0;
     h: number = 0;
     dx: number = 0;
     dy: number = 0;
+
+    animCounter: number = 0;
+
+    debugColor? = '#f68187';
+
+    constructor(level: Level) {
+        this.level = level;
+    }
+
+    update(dt: number) {
+        this.animCounter += dt;
+    }
+
+    render(context: CanvasRenderingContext2D) {
+        if (this.debugColor == null) {
+            return;
+        }
+        context.fillStyle = this.debugColor;
+        context.fillRect(this.x, this.y, this.w, this.h);
+    }
 
     //#region Getters and setter and junk.
     get minX() {

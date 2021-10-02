@@ -291,11 +291,11 @@ export function drawSprite({
     image: string | ImageMetadata;
     frame: number;
     position: Point;
-    scale: number;
-    anchorRatios: Point;
-    flippedX: boolean;
-    flippedY: boolean;
-    filter: string;
+    scale?: number;
+    anchorRatios?: Point;
+    flippedX?: boolean;
+    flippedY?: boolean;
+    filter?: string;
 }): boolean {
     if (typeof image === "string") {
         image = images[image];
@@ -399,11 +399,11 @@ export function drawAnimation({
     animationName: string;
     time: number;
     position: Point;
-    scale: number;
-    anchorRatios: Point;
-    flippedX: boolean;
-    flippedY: boolean;
-    filter: string;
+    scale?: number;
+    anchorRatios?: Point;
+    flippedX?: boolean;
+    flippedY?: boolean;
+    filter?: string;
 }): boolean {
     if (typeof image === "string") {
         image = images[image];

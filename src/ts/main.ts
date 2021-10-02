@@ -1,4 +1,5 @@
 import { Game } from "./game/game";
+import * as Aseprite from "./aseprite-js";
 
 const timeStep = 1 / 60;
 
@@ -9,6 +10,8 @@ let game: Game;
 function init(): void {
     canvas = document.querySelector('.canvas') as HTMLCanvasElement;
     context = canvas.getContext('2d')!;
+
+    Aseprite.disableSmoothing(context);
 
     game = new Game();
 
@@ -28,6 +31,8 @@ function fixedUpdate() {
 }
 
 function render() {
+    context.resetTransform();
+
     game.render(context);
 }
 
