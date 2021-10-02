@@ -123,3 +123,8 @@ export function seededRandom(seed: string): () => number {
     const seedFn = xmur3(seed);
     return mulberry32(seedFn());
 }
+
+export function choose<T>(arr: Array<T>, rng: () => number): T {
+    const index = Math.floor(rng() * arr.length);
+    return arr[index];
+}

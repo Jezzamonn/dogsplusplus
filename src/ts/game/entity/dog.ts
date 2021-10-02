@@ -5,10 +5,9 @@ import { Level } from "../level";
 import { Keys } from "../../keys";
 import { lerp } from "../../util";
 
-Aseprite.loadImage({name: "puppy", basePath: "sprites/"})
+Aseprite.loadImage({ name: "puppy", basePath: "sprites/" });
 
-export class Player extends Entity {
-
+export class Dog extends Entity {
     walkSpeed = 1.2 * PHYSICS_SCALE * FPS;
     jumpSpeed = 3 * PHYSICS_SCALE * FPS;
 
@@ -25,33 +24,14 @@ export class Player extends Entity {
         this.debugColor = undefined;
     }
 
-    update(dt: number) {
-        this.animCount += dt;
+    moveLeft(dt: number) {
+        this.facingDir = FacingDir.LEFT;
+        this.dx = -this.walkSpeed;
+    }
 
-        const onGround = this.isStandingOnGround();
-
-        if (Keys.isPressed("ArrowLeft") && Keys.isPressed("ArrowRight")) {
-            // nothing
-        }
-        else if (Keys.isPressed("ArrowLeft")) {
-            this.facingDir = FacingDir.LEFT;
-            this.dx = -this.walkSpeed;
-        }
-        else if (Keys.isPressed("ArrowRight")) {
-            this.facingDir = FacingDir.RIGHT;
-            this.dx = this.walkSpeed;
-        }
-        else {
-            this.dampenX(dt);
-        }
-
-        if (onGround && Keys.wasPressedThisFrame("ArrowUp")) {
-            this.jump();
-        }
-
-        this.applyGravity(dt);
-        this.moveX(dt);
-        this.moveY(dt);
+    moveRight(dt: number) {
+        this.facingDir = FacingDir.RIGHT;
+        this.dx = this.walkSpeed;
     }
 
     jump() {
@@ -59,21 +39,18 @@ export class Player extends Entity {
     }
 
     render(context: CanvasRenderingContext2D) {
-        let animName = 'idle';
+        let animName = "idle";
         if (!this.isStandingOnGround()) {
             const jumpAnimationSwitch = 0.5 * PHYSICS_SCALE * FPS;
             if (this.dy < -jumpAnimationSwitch) {
-                animName = 'jump-up';
+                animName = "jump-up";
+            } else if (this.dy < jumpAnimationSwitch) {
+                animName = "jump-mid";
+            } else {
+                animName = "jump-down";
             }
-            else if (this.dy < jumpAnimationSwitch) {
-                animName = 'jump-mid';
-            }
-            else {
-                animName = 'jump-down';
-            }
-        }
-        else if (Math.abs(this.dx) > 0.1 * this.walkSpeed) {
-            animName = 'run';
+        } else if (Math.abs(this.dx) > 0.1 * this.walkSpeed) {
+            animName = "run";
         }
 
         Aseprite.drawAnimation({

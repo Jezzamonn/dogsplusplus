@@ -1,7 +1,9 @@
 import { lerp } from "../util";
 import { physFromPx, PHYSICS_SCALE, Point, rng } from "./constants";
+import { PlayerController } from "./controller/player-controller";
+import { RandomController } from "./controller/random-controller";
+import { Dog } from "./entity/dog";
 import { Entity } from "./entity/entity";
-import { Player } from "./entity/player";
 import { Game } from "./game";
 
 const TILE_SIZE = 10 * PHYSICS_SCALE;
@@ -23,11 +25,15 @@ export class Level {
         this.initFromImage(image);
 
         for (let i = 0; i < 20; i++) {
-            const ent = new Player(this);
+            const ent = new Dog(this);
             ent.midX = lerp(0, TILE_SIZE * this.width, rng());
             ent.maxY = lerp(0, TILE_SIZE * (this.height - 1), rng());
+            ent.controller = new RandomController();
+
             this.entities.push(ent);
         }
+
+        this.entities[0].controller = new PlayerController()
 
     }
 

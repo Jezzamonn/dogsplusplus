@@ -1,4 +1,5 @@
 import { Dir, FPS, PHYSICS_SCALE, Point } from "../constants";
+import { Controller } from "../controller/controller";
 import { Level, Tile } from "../level";
 
 export enum FacingDir {
@@ -23,6 +24,9 @@ export class Entity {
 
     animCount: number = 0;
 
+    controller?: Controller;
+    attachedEntities: {ent: Entity, pos: Point}[] = [];
+
     debugColor? = "#f68187";
 
     constructor(level: Level) {
@@ -32,9 +36,12 @@ export class Entity {
     update(dt: number) {
         this.animCount += dt;
 
+        this.controller?.update(this, dt);
+
         this.applyGravity(dt);
         this.moveX(dt);
         this.moveY(dt)
+        this.updateAttachedEntities(dt);
     }
 
     render(context: CanvasRenderingContext2D) {
@@ -48,6 +55,13 @@ export class Entity {
     applyGravity(dt: number) {
         this.dy += this.gravity * dt;
     }
+
+    // Stuff for controllers to use:
+    moveLeft(dt: number) {}
+
+    moveRight(dt: number) {}
+
+    jump() {}
 
     dampenX(dt: number) {
         if (this.dx > this.xDampAmt * dt) {
@@ -96,6 +110,14 @@ export class Entity {
             if (this.isTouching(Tile.GROUND, { dir: Dir.DOWN })) {
                 this.onDownCollision();
             }
+        }
+    }
+
+    updateAttachedEntities(dt: number) {
+        // TODO: Maybe move things more smoothly? Or for the dog at least.
+        for (const {ent, pos} of this.attachedEntities) {
+            ent.x = this.x + pos.x;
+            ent.y = this.y + pos.y;
         }
     }
 
