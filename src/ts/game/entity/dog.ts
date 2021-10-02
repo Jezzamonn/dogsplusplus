@@ -16,6 +16,7 @@ export class Dog extends Entity {
     upDog?: Dog;
     downDog?: Dog;
     reachedDesiredPosition = false;
+    canBePickedUp = true;
 
     constructor(level: Level) {
         super(level);
@@ -37,6 +38,13 @@ export class Dog extends Entity {
         this.regularUpdate(dt);
     }
 
+    updateController(dt: number) {
+        if (this.downDog) {
+            return;
+        }
+        this.controller?.update(this, dt);
+    }
+
     regularUpdate(dt: number) {
         if (this.upDog) {
             this.upDog.dy = this.dy;
@@ -50,6 +58,10 @@ export class Dog extends Entity {
         if (this.downDog == undefined) {
             this.checkForUpDogs();
         }
+
+        if (this.isStandingOnGround()) {
+            this.canBePickedUp = true;
+        }
     }
 
     moveUpDog(dt: number) {
@@ -57,7 +69,7 @@ export class Dog extends Entity {
         // Also the 0.3 multipliers need to be updated for slowmo.
         if (this.upDog) {
             const maxXDistAllowed = physFromPx(8);
-            const maxYDistAllowed = physFromPx(20);
+            const maxYDistAllowed = physFromPx(8);
 
             let desiredMidX = this.midX;
             let xDiff = desiredMidX - this.upDog.midX;
@@ -83,6 +95,7 @@ export class Dog extends Entity {
                 if (this.upDog.reachedDesiredPosition) {
                     // un-stable the dog
                     this.upDog.downDog = undefined;
+                    this.upDog.canBePickedUp = false;
                     this.upDog = undefined;
                 }
             }

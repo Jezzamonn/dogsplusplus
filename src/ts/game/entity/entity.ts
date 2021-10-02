@@ -38,11 +38,15 @@ export class Entity {
     update(dt: number) {
         this.animCount += dt;
 
-        this.controller?.update(this, dt);
+        this.updateController();
 
         this.applyGravity(dt);
         this.moveX(this.dx * dt);
         this.moveY(this.dy * dt);
+    }
+
+    updateController(dt:number) {
+        this.controller?.update(this, dt);
     }
 
     render(context: CanvasRenderingContext2D) {
