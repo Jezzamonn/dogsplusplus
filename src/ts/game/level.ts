@@ -1,5 +1,5 @@
 import { lerp } from "../util";
-import { physFromPixelArt, PHYSICS_SCALE, Point, rng } from "./constants";
+import { physFromPx, PHYSICS_SCALE, Point, rng } from "./constants";
 import { Entity } from "./entity/entity";
 import { Player } from "./entity/player";
 import { Game } from "./game";
@@ -20,16 +20,15 @@ export class Level {
     constructor(game: Game, image: HTMLImageElement) {
         this.game = game;
 
+        this.initFromImage(image);
+
         for (let i = 0; i < 20; i++) {
             const ent = new Player(this);
-            ent.x = lerp(0, 100, rng());
-            ent.y = lerp(0, 100, rng());
-            ent.w = physFromPixelArt(5);
-            ent.h = physFromPixelArt(5);
+            ent.midX = lerp(0, TILE_SIZE * this.width, rng());
+            ent.maxY = lerp(0, TILE_SIZE * (this.height - 1), rng());
             this.entities.push(ent);
         }
 
-        this.initFromImage(image);
     }
 
     initFromImage(image: HTMLImageElement): void {

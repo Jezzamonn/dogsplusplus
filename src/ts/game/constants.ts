@@ -17,7 +17,8 @@ export enum Dir {
     DOWN,
 }
 
-export const PHYSICS_SCALE = 8;
+export const PHYSICS_SCALE = 16;
+export const FPS = 60;
 export const DEFAULT_PIXEL_SCALE = 3;
 
 export const GAME_WIDTH_PX = 60 * 3 * DEFAULT_PIXEL_SCALE;

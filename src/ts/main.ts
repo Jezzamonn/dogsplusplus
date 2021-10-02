@@ -1,6 +1,7 @@
 import { Game } from "./game/game";
 import * as Aseprite from "./aseprite-js";
 import * as Images from "./images";
+import { Keys } from "./keys";
 
 const timeStep = 1 / 60;
 
@@ -13,6 +14,7 @@ async function init() {
     context = canvas.getContext('2d')!;
 
     Aseprite.disableSmoothing(context);
+    Keys.setUp();
 
     await loadAllImages();
 
@@ -31,6 +33,7 @@ function doAnimationFrame(): void {
 
 function fixedUpdate() {
     game.update(timeStep);
+    Keys.resetFrame();
 }
 
 function render() {

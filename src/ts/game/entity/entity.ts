@@ -1,4 +1,4 @@
-import { Dir, Point } from "../constants";
+import { Dir, FPS, PHYSICS_SCALE, Point } from "../constants";
 import { Level, Tile } from "../level";
 
 export enum FacingDir {
@@ -17,7 +17,8 @@ export class Entity {
     dy: number = 0;
     canColide = true;
     // This is what the other one did, who knows what works for this game.
-    gravity = 2000;
+    gravity = (1 / 8) * PHYSICS_SCALE * FPS * FPS;
+    xDampAmt = (1 / 8) * PHYSICS_SCALE * FPS * FPS;
     facingDir = FacingDir.RIGHT;
 
     animCount: number = 0;
@@ -46,6 +47,18 @@ export class Entity {
 
     applyGravity(dt: number) {
         this.dy += this.gravity * dt;
+    }
+
+    dampenX(dt: number) {
+        if (this.dx > this.xDampAmt * dt) {
+            this.dx -= this.xDampAmt * dt;
+        }
+        else if (this.dx < -this.xDampAmt * dt) {
+            this.dx += this.xDampAmt * dt;
+        }
+        else {
+            this.dx = 0;
+        }
     }
 
     moveX(dt: number) {
