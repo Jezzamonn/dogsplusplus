@@ -16,7 +16,7 @@ export class Dog extends Entity {
     upDog?: Dog;
     downDog?: Dog;
     reachedDesiredPosition = false;
-    canBePickedUp = true;
+    canBePickedUp = false;
 
     hue: number = 0;
 
@@ -46,9 +46,9 @@ export class Dog extends Entity {
     }
 
     updateController(dt: number) {
-        if (this.downDog) {
-            return;
-        }
+        // if (this.downDog) {
+        //     return;
+        // }
         this.controller?.update(this, dt);
     }
 

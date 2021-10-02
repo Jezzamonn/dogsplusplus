@@ -24,10 +24,10 @@ export class Level {
 
         this.initFromImage(image);
 
-        for (let i = 0; i < 20; i++) {
+        for (let i = 0; i < 40; i++) {
             const ent = new Dog(this);
             ent.midX = lerp(0, TILE_SIZE * this.width, rng());
-            ent.maxY = lerp(0, TILE_SIZE * (this.height - 1), rng());
+            ent.maxY = lerp(0, TILE_SIZE * 3, rng());
             ent.controller = new RandomController();
 
             this.entities.push(ent);
@@ -39,18 +39,6 @@ export class Level {
         player.controller = new PlayerController();
 
         this.entities.push(player);
-
-        for (let i = 0; i < 2; i++) {
-            const lastEnt = this.entities[this.entities.length - 1] as Dog;
-
-            const ent = new Dog(this);
-            ent.midX = lastEnt.midX;
-            ent.maxY = lastEnt.minY;
-            lastEnt.upDog = ent;
-            ent.downDog = lastEnt;
-
-            this.entities.push(ent);
-        }
     }
 
     initFromImage(image: HTMLImageElement): void {
