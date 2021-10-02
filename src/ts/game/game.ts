@@ -4,6 +4,7 @@ import * as Images from "../images";
 import { Camera } from "./camera/camera";
 import { FocusCamera } from "./camera/focus-camera";
 import { Dog } from "./entity/dog";
+import { PlayerController } from "./controller/player-controller";
 
 export class Game {
 
@@ -21,7 +22,7 @@ export class Game {
 
         const focusCamera = new FocusCamera();
         focusCamera.getFocalPoint = () => {
-            const player = this.level.getPlayer();
+            const player = (this.level.getPlayer() as Dog).downestDog;
             if (!player) {
                 return {x: 0, y: 0}
             }
@@ -41,6 +42,7 @@ export class Game {
     }
 
     update(dt: number): void {
+        PlayerController.resetHasMovedDown();
         this.level.update(dt);
 
         this.camera.update(this, dt);

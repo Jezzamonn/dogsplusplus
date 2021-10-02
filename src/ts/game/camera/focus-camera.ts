@@ -28,7 +28,7 @@ export class FocusCamera extends Camera {
             this.scale = desiredScale;
         }
 
-        const updateSmoothness = 1 - Math.exp(-3 * dt);
+        const updateSmoothness = 1 - Math.exp(-5 * dt);
         this.curPos.x = lerp(this.curPos.x, desiredPoint.x, updateSmoothness);
         this.curPos.y = lerp(this.curPos.y, desiredPoint.y, updateSmoothness);
         const scaleUpdateSmoothness = 1 - Math.exp(-0.2 * dt);

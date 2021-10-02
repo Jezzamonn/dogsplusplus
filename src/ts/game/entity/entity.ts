@@ -2,7 +2,7 @@ import { Dir, FPS, PHYSICS_SCALE, Point } from "../constants";
 import { Controller } from "../controller/controller";
 import { Level, Tile, TILE_SIZE } from "../level";
 
-const MAX_MOVEMENT_PER_STEP = TILE_SIZE;
+const MAX_MOVEMENT_PER_STEP = 0.8 * TILE_SIZE;
 
 let entityCounter = 0;
 
@@ -82,7 +82,7 @@ export class Entity {
         }
     }
 
-    moveX(dx: number) {
+    moveX(dx: number): boolean {
         while (dx > MAX_MOVEMENT_PER_STEP) {
             this.moveX(MAX_MOVEMENT_PER_STEP);
             dx -= MAX_MOVEMENT_PER_STEP;
@@ -95,23 +95,26 @@ export class Entity {
         this.x = Math.round(this.x + dx);
 
         if (!this.canColide) {
-            return;
+            return false;
         }
 
         if (dx < 0) {
             // Moving left
             if (this.isTouching(Tile.GROUND, { dir: Dir.LEFT })) {
                 this.onLeftCollision();
+                return true;
             }
         } else if (dx > 0) {
             // Moving right
             if (this.isTouching(Tile.GROUND, { dir: Dir.RIGHT })) {
                 this.onRightCollision();
+                return true;
             }
         }
+        return false;
     }
 
-    moveY(dy: number) {
+    moveY(dy: number): boolean {
         while (dy > MAX_MOVEMENT_PER_STEP) {
             this.moveY(MAX_MOVEMENT_PER_STEP);
             dy -= MAX_MOVEMENT_PER_STEP;
@@ -124,18 +127,21 @@ export class Entity {
         this.y = Math.round(this.y + dy);
 
         if (!this.canColide) {
-            return;
+            return false;
         }
 
         if (dy < 0) {
             if (this.isTouching(Tile.GROUND, { dir: Dir.UP })) {
                 this.onUpCollision();
+                return true;
             }
         } else if (dy > 0) {
             if (this.isTouching(Tile.GROUND, { dir: Dir.DOWN })) {
                 this.onDownCollision();
+                return true;
             }
         }
+        return false;
     }
 
     // Functions that can also be edited by subclasses

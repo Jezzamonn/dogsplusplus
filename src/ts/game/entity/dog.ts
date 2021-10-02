@@ -5,16 +5,19 @@ import { Level } from "../level";
 import { Keys } from "../../keys";
 import { clamp, clampInvLerp, easeInOut, invLerp, lerp } from "../../util";
 import { PlayerController } from "../controller/player-controller";
+import { RandomController } from "../controller/random-controller";
 
 Aseprite.loadImage({ name: "puppy", basePath: "sprites/" });
 
 export class Dog extends Entity {
+
     walkSpeed = 1 * PHYSICS_SCALE * FPS;
     runSpeed = 1.5 * PHYSICS_SCALE * FPS;
-    jumpSpeed = 3 * PHYSICS_SCALE * FPS;
+    jumpSpeed = 2.3 * PHYSICS_SCALE * FPS;
 
     upDog?: Dog;
     downDog?: Dog;
+
     reachedDesiredPosition = false;
     canBePickedUp = false;
 
@@ -23,19 +26,26 @@ export class Dog extends Entity {
     constructor(level: Level) {
         super(level);
 
-        this.w = physFromPx(10) - 2;
+        this.w = physFromPx(10) - 5;
         this.h = physFromPx(10) - 1;
 
         this.walkSpeed *= lerp(0.85, 1.3, rng());
 
         this.animCount = rng();
-        this.hue = rng();
+        this.hue = Math.floor(6 * rng()) / 6;
 
         this.debugColor = undefined;
     }
 
     get filterString() {
-        return `hue-rotate(${(360 * this.hue).toFixed(0)}deg)`;
+        let filter = `hue-rotate(${(360 * this.hue).toFixed(0)}deg)`;
+        if (this.controller instanceof PlayerController) {
+            filter += ` brightness(1.2)`;
+        }
+        else {
+            filter += ` brightness(0.9) saturate(150%)`;
+        }
+        return filter;
     }
 
     update(dt: number) {
@@ -46,15 +56,23 @@ export class Dog extends Entity {
     }
 
     updateController(dt: number) {
-        // if (this.downDog) {
-        //     return;
-        // }
+        if (this.controller instanceof PlayerController) {
+            this.controller.update(this, dt);
+            return;
+        }
+        else if (this.downDog) {
+            return;
+        }
+        else if (this.hasPlayerInTower()) {
+            return;
+        }
         this.controller?.update(this, dt);
     }
 
     regularUpdate(dt: number) {
         if (this.upDog) {
             this.upDog.dy = this.dy;
+            this.upDog.dx = 0.5 * this.dx;
             this.upDog.regularUpdate(dt);
         }
 
@@ -84,16 +102,16 @@ export class Dog extends Entity {
         if (this.upDog) {
             const maxXDistAllowed = physFromPx(8);
 
-            let desiredMidX = this.midX;
-            let xDiff = desiredMidX - this.upDog.midX;
+            const desiredMidX = this.midX;
+            const xDiff = desiredMidX - this.upDog.midX;
 
-            let xDiffAmt = clampInvLerp(Math.abs(xDiff), 0, physFromPx(10));
-            let height = lerp(physFromPx(10) + 1, physFromPx(7), xDiffAmt);
-            let desiredMaxY = this.maxY - height;
-            let yDiff = desiredMaxY - this.upDog.maxY;
+            const xDiffAmt = clampInvLerp(Math.abs(xDiff), 0, physFromPx(10));
+            const height = lerp(physFromPx(10) + 1, physFromPx(7), xDiffAmt);
+            const desiredMaxY = this.maxY - height;
+            const yDiff = desiredMaxY - this.upDog.maxY;
 
-            this.upDog.moveX(0.3 * xDiff);
-            this.upDog.moveY(0.3 * yDiff);
+            const hitX = this.upDog.moveX(0.3 * xDiff);
+            const hitY = this.upDog.moveY(0.3 * yDiff);
 
             // TODO: Knock things off.
             this.upDog.facingDir = this.facingDir;
@@ -102,14 +120,12 @@ export class Dog extends Entity {
             let newXDiff = desiredMidX - this.upDog.midX;
             let newYDiff = desiredMaxY - this.upDog.maxY;
             if (
-                Math.abs(newXDiff) > maxXDistAllowed
+                Math.abs(newXDiff) > maxXDistAllowed || yDiff > 0 && hitY
             ) {
                 if (this.upDog.allDownDogsReachedDesiredPosition()) {
                     // un-stable the dog
-                    this.upDog.dx = lerp(-this.walkSpeed, this.walkSpeed, rng());
-                    this.upDog.downDog = undefined;
-                    this.upDog.canBePickedUp = false;
-                    this.upDog = undefined;
+                    this.upDog.dx = this.dx;
+                    this.upDog.detach();
                 }
             }
             else if (this.upDog.reachedDesiredPosition == false) {
@@ -117,6 +133,15 @@ export class Dog extends Entity {
                 this.upDog.reachedDesiredPosition = true;
             }
         }
+    }
+
+    detach() {
+        if (this.downDog) {
+            // this.downestDog.controller = new RandomController();
+            this.downDog.upDog = undefined;
+        }
+        this.downDog = undefined;
+        this.canBePickedUp = false;
     }
 
     checkForUpDogs() {
@@ -137,10 +162,11 @@ export class Dog extends Entity {
             //     continue;
             // }
 
-            if (ent.controller instanceof PlayerController) {
+            if (ent.hasPlayerInTower()) {
                 continue;
             }
 
+            // TODO: Check for which dog is the highest and use that for the top one.
             if (this.isTouchingEntity(ent, physFromPx(-3))) {
                 ent.forAllUpDogs(d => d.reachedDesiredPosition = false);
                 const upMostDog = this.upperMostDog;
@@ -158,6 +184,22 @@ export class Dog extends Entity {
             fn(upDog);
         }
         return upDog;
+    }
+
+    hasPlayerInTower(): boolean {
+        let dog: Dog = this;
+
+        if (dog.controller instanceof PlayerController) {
+            return true;
+        }
+
+        while (dog.upDog) {
+            dog = dog.upDog;
+            if (dog.controller instanceof PlayerController) {
+                return true;
+            }
+        }
+        return false;
     }
 
     allDownDogsReachedDesiredPosition() {
@@ -218,7 +260,6 @@ export class Dog extends Entity {
 
     jump() {
         this.dy = -this.jumpSpeed;
-        this.upDog?.jump();
     }
 
     regularRender(context: CanvasRenderingContext2D) {
