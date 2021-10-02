@@ -8,9 +8,13 @@ import { lerp } from "../../util";
 Aseprite.loadImage({ name: "puppy", basePath: "sprites/" });
 
 export class Dog extends Entity {
+
     walkSpeed = 1 * PHYSICS_SCALE * FPS;
     runSpeed = 1.5 * PHYSICS_SCALE * FPS;
     jumpSpeed = 3 * PHYSICS_SCALE * FPS;
+
+    upDog?: Dog;
+    downDown?: Dog;
 
     constructor(level: Level) {
         super(level);
@@ -23,6 +27,23 @@ export class Dog extends Entity {
         this.animCount = rng();
 
         this.debugColor = undefined;
+    }
+
+    update(dt: number) {
+        super.update(dt);
+
+        if (this.upDog) {
+            let xDiff = this.midX - this.upDog.midX;
+            let yDiff = this.minY - this.upDog.maxY;
+
+            // TODO: Something to make the tower more fragile
+            // TODO: Knock things off.
+
+            this.upDog.moveX(xDiff);
+            this.upDog.moveY(yDiff);
+
+            this.upDog.dy = 0;
+        }
     }
 
     get xMoveSpeed(): number {

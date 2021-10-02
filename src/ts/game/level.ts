@@ -24,17 +24,33 @@ export class Level {
 
         this.initFromImage(image);
 
-        for (let i = 0; i < 20; i++) {
+        // for (let i = 0; i < 20; i++) {
+        //     const ent = new Dog(this);
+        //     ent.midX = lerp(0, TILE_SIZE * this.width, rng());
+        //     ent.maxY = lerp(0, TILE_SIZE * (this.height - 1), rng());
+        //     ent.controller = new RandomController();
+
+        //     this.entities.push(ent);
+        // }
+
+        const player = new Dog(this);
+        player.midX = lerp(0, TILE_SIZE * this.width, rng());
+        player.maxY = lerp(0, TILE_SIZE * (this.height - 1), rng());
+        player.controller = new PlayerController();
+
+        this.entities.push(player);
+
+        for (let i = 0; i < 2; i++) {
+            const lastEnt = this.entities[this.entities.length - 1] as Dog;
+
             const ent = new Dog(this);
-            ent.midX = lerp(0, TILE_SIZE * this.width, rng());
-            ent.maxY = lerp(0, TILE_SIZE * (this.height - 1), rng());
-            ent.controller = new RandomController();
+            ent.midX = lastEnt.midX;
+            ent.maxY = lastEnt.minY;
+            lastEnt.upDog = ent;
+            ent.downDown = lastEnt;
 
             this.entities.push(ent);
         }
-
-        this.entities[0].controller = new PlayerController()
-
     }
 
     initFromImage(image: HTMLImageElement): void {

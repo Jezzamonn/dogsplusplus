@@ -26,7 +26,6 @@ export class Entity {
     animCount: number = 0;
 
     controller?: Controller;
-    attachedEntities: {ent: Entity, pos: Point}[] = [];
 
     debugColor? = "#f68187";
 
@@ -40,9 +39,8 @@ export class Entity {
         this.controller?.update(this, dt);
 
         this.applyGravity(dt);
-        this.moveX(dt);
-        this.moveY(dt)
-        this.updateAttachedEntities(dt);
+        this.moveX(this.dx * dt);
+        this.moveY(this.dy * dt);
     }
 
     render(context: CanvasRenderingContext2D) {
@@ -67,28 +65,26 @@ export class Entity {
     dampenX(dt: number) {
         if (this.dx > this.xDampAmt * dt) {
             this.dx -= this.xDampAmt * dt;
-        }
-        else if (this.dx < -this.xDampAmt * dt) {
+        } else if (this.dx < -this.xDampAmt * dt) {
             this.dx += this.xDampAmt * dt;
-        }
-        else {
+        } else {
             this.dx = 0;
         }
     }
 
-    moveX(dt: number) {
-        this.x = Math.round(this.x + this.dx * dt);
+    moveX(dx: number) {
+        this.x = Math.round(this.x + dx);
 
         if (!this.canColide) {
             return;
         }
 
-        if (this.dx < 0) {
+        if (dx < 0) {
             // Moving left
             if (this.isTouching(Tile.GROUND, { dir: Dir.LEFT })) {
                 this.onLeftCollision();
             }
-        } else if (this.dx > 0) {
+        } else if (dx > 0) {
             // Moving right
             if (this.isTouching(Tile.GROUND, { dir: Dir.RIGHT })) {
                 this.onRightCollision();
@@ -96,29 +92,21 @@ export class Entity {
         }
     }
 
-    moveY(dt: number) {
-        this.y = Math.round(this.y + this.dy * dt);
+    moveY(dy: number) {
+        this.y = Math.round(this.y + dy);
 
         if (!this.canColide) {
             return;
         }
 
-        if (this.dy < 0) {
+        if (dy < 0) {
             if (this.isTouching(Tile.GROUND, { dir: Dir.UP })) {
                 this.onUpCollision();
             }
-        } else if (this.dy > 0) {
+        } else if (dy > 0) {
             if (this.isTouching(Tile.GROUND, { dir: Dir.DOWN })) {
                 this.onDownCollision();
             }
-        }
-    }
-
-    updateAttachedEntities(dt: number) {
-        // TODO: Maybe move things more smoothly? Or for the dog at least.
-        for (const {ent, pos} of this.attachedEntities) {
-            ent.x = this.x + pos.x;
-            ent.y = this.y + pos.y;
         }
     }
 
