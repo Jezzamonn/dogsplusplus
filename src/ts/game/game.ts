@@ -15,7 +15,7 @@ export class Game {
     }
 
     render(context: CanvasRenderingContext2D): void {
-        const h = 360 * this.totalDt;
+        const h = 30 * this.totalDt;
         context.fillStyle = `hsl(${h.toFixed(2)}, 50%, 50%)`;
         context.fillRect(0, 0, context.canvas.width, context.canvas.height);
     }
