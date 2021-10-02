@@ -18,6 +18,8 @@ export class Dog extends Entity {
     reachedDesiredPosition = false;
     canBePickedUp = true;
 
+    hue: number = 0;
+
     constructor(level: Level) {
         super(level);
 
@@ -27,8 +29,13 @@ export class Dog extends Entity {
         this.walkSpeed *= lerp(0.85, 1.3, rng());
 
         this.animCount = rng();
+        this.hue = rng();
 
         this.debugColor = undefined;
+    }
+
+    get filterString() {
+        return `hue-rotate(${(360 * this.hue).toFixed(0)}deg)`;
     }
 
     update(dt: number) {
@@ -214,6 +221,7 @@ export class Dog extends Entity {
             },
             scale: PHYSICS_SCALE,
             flippedX: this.facingDir == FacingDir.LEFT,
+            filter: this.filterString,
         });
     }
 

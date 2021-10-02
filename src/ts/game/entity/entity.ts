@@ -38,7 +38,7 @@ export class Entity {
     update(dt: number) {
         this.animCount += dt;
 
-        this.updateController();
+        this.updateController(dt);
 
         this.applyGravity(dt);
         this.moveX(this.dx * dt);
