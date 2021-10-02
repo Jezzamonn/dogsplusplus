@@ -1,8 +1,9 @@
-import { PHYSICS_SCALE } from "./constants";
+import { GAME_HEIGHT_PX, physFromPx, PHYSICS_SCALE } from "./constants";
 import { Level } from "./level";
 import * as Images from "../images";
 import { Camera } from "./camera/camera";
 import { FocusCamera } from "./camera/focus-camera";
+import { Dog } from "./entity/dog";
 
 export class Game {
 
@@ -28,6 +29,12 @@ export class Game {
                 x: player.midX,
                 y: player.midY,
             }
+        }
+        focusCamera.getDesiredScale = () => {
+            const player = this.level.getPlayer() as Dog;
+            const size = player.getDogSize();
+            const totalHeight = physFromPx(10) * size;
+            return physFromPx(GAME_HEIGHT_PX) / totalHeight;
         }
 
         this.camera = focusCamera;

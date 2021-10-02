@@ -192,6 +192,16 @@ export class Dog extends Entity {
         return downDog;
     }
 
+    getDogSize(): number {
+        let size = 1;
+        let upDog: Dog = this;
+        while (upDog.upDog) {
+            upDog = upDog.upDog;
+            size ++;
+        }
+        return size;
+    }
+
     get xMoveSpeed(): number {
         return this.running ? this.runSpeed : this.walkSpeed;
     }

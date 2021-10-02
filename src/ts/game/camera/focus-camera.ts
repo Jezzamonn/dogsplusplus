@@ -1,4 +1,4 @@
-import { lerp } from "../../util";
+import { experp, lerp } from "../../util";
 import { PHYSICS_SCALE, Point } from "../constants";
 import { Game } from "../game";
 import { Camera } from "./camera";
@@ -8,23 +8,32 @@ const screenPos = {x: 0.5, y: 0.7}
 export class FocusCamera extends Camera {
 
     getFocalPoint?: () => Point;
+    getDesiredScale?: () => number;
 
     curPos?: Point;
-    scale = 3;
+    curScale?: number;
 
     update(game: Game, dt: number): void {
-        if (!this.getFocalPoint) {
+        if (!this.getFocalPoint || !this.getDesiredScale) {
             return;
         }
 
         const desiredPoint = this.getFocalPoint();
-        if (this.curPos == null) {
+        if (this.curPos == undefined) {
             this.curPos = desiredPoint;
-            return;
         }
+
+        const desiredScale = this.getDesiredScale();
+        if (this.scale == undefined) {
+            this.scale = desiredScale;
+        }
+
         const updateSmoothness = 1 - Math.exp(-3 * dt);
         this.curPos.x = lerp(this.curPos.x, desiredPoint.x, updateSmoothness);
         this.curPos.y = lerp(this.curPos.y, desiredPoint.y, updateSmoothness);
+        const scaleUpdateSmoothness = 1 - Math.exp(-0.2 * dt);
+        this.scale = experp(this.scale, desiredScale, scaleUpdateSmoothness);
+        this.scale = Math.min(3, this.scale);
     }
 
     applyToContext(context: CanvasRenderingContext2D) {

@@ -29,8 +29,8 @@ export class Level {
             const ent = new Dog(this);
             ent.midX = lerp(1, TILE_SIZE * (this.width - 1), rng());
             ent.maxY = lerp(0, TILE_SIZE * 3, rng());
-            // ent.controller = new RandomController();
-            ent.controller = new StandController();
+            ent.controller = new RandomController();
+            // ent.controller = new StandController();
 
             this.entities.push(ent);
         }
