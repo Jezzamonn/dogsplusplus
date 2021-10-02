@@ -46,6 +46,10 @@ export class Dog extends Entity {
         super.update(dt);
 
         this.moveUpDog(dt);
+
+        if (this.downDog == undefined) {
+            this.checkForUpDogs();
+        }
     }
 
     moveUpDog(dt: number) {

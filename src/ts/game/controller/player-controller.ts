@@ -1,5 +1,4 @@
 import { Keys } from "../../keys";
-import { Dog } from "../entity/dog";
 import { Entity } from "../entity/entity";
 import { Controller } from "./controller";
 
@@ -25,10 +24,6 @@ export class PlayerController extends Controller {
         // Feels weird on release.
         if (onGround && Keys.anyWasPressedThisFrame(JUMP_KEYS)) {
             entity.jump();
-        }
-
-        if (entity instanceof Dog) {
-            entity.checkForUpDogs();
         }
     }
 }
