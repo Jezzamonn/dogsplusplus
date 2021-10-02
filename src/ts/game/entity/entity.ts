@@ -1,6 +1,8 @@
 import { Dir, FPS, PHYSICS_SCALE, Point } from "../constants";
 import { Controller } from "../controller/controller";
-import { Level, Tile } from "../level";
+import { Level, Tile, TILE_SIZE } from "../level";
+
+const MAX_MOVEMENT_PER_STEP = TILE_SIZE;
 
 export enum FacingDir {
     LEFT,
@@ -73,6 +75,15 @@ export class Entity {
     }
 
     moveX(dx: number) {
+        while (dx > MAX_MOVEMENT_PER_STEP) {
+            this.moveX(MAX_MOVEMENT_PER_STEP);
+            dx -= MAX_MOVEMENT_PER_STEP;
+        }
+        while (dx < -MAX_MOVEMENT_PER_STEP) {
+            this.moveX(-MAX_MOVEMENT_PER_STEP);
+            dx += MAX_MOVEMENT_PER_STEP;
+        }
+
         this.x = Math.round(this.x + dx);
 
         if (!this.canColide) {
@@ -93,6 +104,15 @@ export class Entity {
     }
 
     moveY(dy: number) {
+        while (dy > MAX_MOVEMENT_PER_STEP) {
+            this.moveY(MAX_MOVEMENT_PER_STEP);
+            dy -= MAX_MOVEMENT_PER_STEP;
+        }
+        while (dy < -MAX_MOVEMENT_PER_STEP) {
+            this.moveY(-MAX_MOVEMENT_PER_STEP);
+            dy += MAX_MOVEMENT_PER_STEP;
+        }
+
         this.y = Math.round(this.y + dy);
 
         if (!this.canColide) {

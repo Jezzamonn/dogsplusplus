@@ -76,11 +76,13 @@ export const splitInternal = invLerp;
 export const divideInterval = splitInternal;
 
 /**
- * Like splitInterval, but with clamping.
+ * Like invLerp, but with clamping.
  */
-export function clampedSplitInternal(t: number, min: number, max: number) {
+export function clampInvLerp(t: number, min: number, max: number) {
     return clamp(splitInternal(t, min, max), 0, 1);
 }
+
+export const clampedSplitInternal = clampInvLerp;
 
 export function rgb(r: number, g: number, b: number) {
     return 'rgb('+r+','+g+','+b+')';

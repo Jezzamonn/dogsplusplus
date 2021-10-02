@@ -6,7 +6,7 @@ import { Dog } from "./entity/dog";
 import { Entity } from "./entity/entity";
 import { Game } from "./game";
 
-const TILE_SIZE = 10 * PHYSICS_SCALE;
+export const TILE_SIZE = 10 * PHYSICS_SCALE;
 
 export enum Tile {
     AIR,
@@ -47,7 +47,7 @@ export class Level {
             ent.midX = lastEnt.midX;
             ent.maxY = lastEnt.minY;
             lastEnt.upDog = ent;
-            ent.downDown = lastEnt;
+            ent.downDog = lastEnt;
 
             this.entities.push(ent);
         }

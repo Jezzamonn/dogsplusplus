@@ -3,7 +3,7 @@ import * as Aseprite from "../../aseprite-js";
 import { FPS, physFromPx, PHYSICS_SCALE, rng } from "../constants";
 import { Level } from "../level";
 import { Keys } from "../../keys";
-import { lerp } from "../../util";
+import { clamp, clampInvLerp, invLerp, lerp } from "../../util";
 
 Aseprite.loadImage({ name: "puppy", basePath: "sprites/" });
 
@@ -14,7 +14,7 @@ export class Dog extends Entity {
     jumpSpeed = 3 * PHYSICS_SCALE * FPS;
 
     upDog?: Dog;
-    downDown?: Dog;
+    downDog?: Dog;
 
     constructor(level: Level) {
         super(level);
@@ -34,13 +34,20 @@ export class Dog extends Entity {
 
         if (this.upDog) {
             let xDiff = this.midX - this.upDog.midX;
-            let yDiff = this.minY - this.upDog.maxY;
+            this.upDog.moveX(0.3 * xDiff);
+
+            let xDiffAmt = clampInvLerp(Math.abs(xDiff), 0, physFromPx(4));
+
+            let height = lerp(physFromPx(7), physFromPx(10), xDiffAmt)
+
+            let yDiff = (this.y - height) - this.upDog.y;
 
             // TODO: Something to make the tower more fragile
             // TODO: Knock things off.
 
-            this.upDog.moveX(xDiff);
             this.upDog.moveY(yDiff);
+
+            this.upDog.facingDir = this.facingDir;
 
             this.upDog.dy = 0;
         }
@@ -64,9 +71,16 @@ export class Dog extends Entity {
         this.dy = -this.jumpSpeed;
     }
 
-    render(context: CanvasRenderingContext2D) {
+    regularRender(context: CanvasRenderingContext2D) {
+        if (this.upDog) {
+            this.upDog.regularRender(context);
+        }
+
         let animName = "idle";
-        if (!this.isStandingOnGround()) {
+        if (this.downDog) {
+            animName = 'idle';
+        }
+        else if (!this.isStandingOnGround()) {
             const jumpAnimationSwitch = 0.5 * PHYSICS_SCALE * FPS;
             if (this.dy < -jumpAnimationSwitch) {
                 animName = "jump-up";
@@ -101,5 +115,12 @@ export class Dog extends Entity {
             scale: PHYSICS_SCALE,
             flippedX: this.facingDir == FacingDir.LEFT,
         });
+    }
+
+    render(context: CanvasRenderingContext2D) {
+        if (this.downDog) {
+            return;
+        }
+        this.regularRender(context);
     }
 }
