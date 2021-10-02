@@ -3,7 +3,7 @@ import * as Aseprite from "../../aseprite-js";
 import { FPS, physFromPx, PHYSICS_SCALE, rng } from "../constants";
 import { Level } from "../level";
 import { Keys } from "../../keys";
-import { clamp, clampInvLerp, invLerp, lerp } from "../../util";
+import { clamp, clampInvLerp, easeInOut, invLerp, lerp } from "../../util";
 import { PlayerController } from "../controller/player-controller";
 
 Aseprite.loadImage({ name: "puppy", basePath: "sprites/" });
@@ -72,11 +72,17 @@ export class Dog extends Entity {
     }
 
     moveUpDog(dt: number) {
+        if (this.downDog == undefined) {
+            if (!this.reachedDesiredPosition) {
+                console.log(`${this.index} reset because I'm the down dog`);
+            }
+            this.reachedDesiredPosition = true;
+        }
+
         // TODO: These maxes should probably have dt worked into them somehow.
         // Also the 0.3 multipliers need to be updated for slowmo.
         if (this.upDog) {
             const maxXDistAllowed = physFromPx(8);
-            const maxYDistAllowed = physFromPx(8);
 
             let desiredMidX = this.midX;
             let xDiff = desiredMidX - this.upDog.midX;
@@ -96,17 +102,18 @@ export class Dog extends Entity {
             let newXDiff = desiredMidX - this.upDog.midX;
             let newYDiff = desiredMaxY - this.upDog.maxY;
             if (
-                Math.abs(newXDiff) > maxXDistAllowed ||
-                Math.abs(newYDiff) > maxYDistAllowed
+                Math.abs(newXDiff) > maxXDistAllowed
             ) {
-                if (this.upDog.reachedDesiredPosition) {
+                if (this.upDog.allDownDogsReachedDesiredPosition()) {
                     // un-stable the dog
+                    this.upDog.dx = lerp(-this.walkSpeed, this.walkSpeed, rng());
                     this.upDog.downDog = undefined;
                     this.upDog.canBePickedUp = false;
                     this.upDog = undefined;
                 }
             }
-            else {
+            else if (this.upDog.reachedDesiredPosition == false) {
+                console.log(`${this.index} at pos ${this.upDog.index}`);
                 this.upDog.reachedDesiredPosition = true;
             }
         }
@@ -135,13 +142,38 @@ export class Dog extends Entity {
             }
 
             if (this.isTouchingEntity(ent, physFromPx(-3))) {
-                ent.reachedDesiredPosition = false;
-                console.log("touching a dog");
-
-                this.upperMostDog.upDog = ent;
-                ent.downDog = this.upperMostDog;
+                ent.forAllUpDogs(d => d.reachedDesiredPosition = false);
+                const upMostDog = this.upperMostDog;
+                upMostDog.upDog = ent;
+                ent.downDog = upMostDog;
             }
         }
+    }
+
+    forAllUpDogs(fn: (dog: Dog) => any) {
+        let upDog: Dog = this;
+        fn(upDog);
+        while (upDog.upDog) {
+            upDog = upDog.upDog;
+            fn(upDog);
+        }
+        return upDog;
+    }
+
+    allDownDogsReachedDesiredPosition() {
+        let dog: Dog = this;
+
+        if (!dog.reachedDesiredPosition) {
+            return false;
+        }
+
+        while (dog.downDog) {
+            dog = dog.downDog;
+            if (!dog.reachedDesiredPosition) {
+                return false;
+            }
+        }
+        return true;
     }
 
     get upperMostDog() {
@@ -184,11 +216,24 @@ export class Dog extends Entity {
             this.upDog.regularRender(context);
         }
 
+        const position = {
+            x: this.midX,
+            y: this.maxY,
+        }
+
+        const jumpAnimationSwitch = 0.5 * PHYSICS_SCALE * FPS;
+
         let animName = "idle";
         if (this.downDog) {
-            animName = "idle";
+            position.y += physFromPx(1);
+            if (this.dy < -jumpAnimationSwitch) {
+                animName = "riding-up";
+            } else if (this.dy < jumpAnimationSwitch) {
+                animName = "riding-mid";
+            } else {
+                animName = "riding-down";
+            }
         } else if (!this.isStandingOnGround()) {
-            const jumpAnimationSwitch = 0.5 * PHYSICS_SCALE * FPS;
             if (this.dy < -jumpAnimationSwitch) {
                 animName = "jump-up";
             } else if (this.dy < jumpAnimationSwitch) {
@@ -211,10 +256,7 @@ export class Dog extends Entity {
             image: "puppy",
             animationName: animName,
             time: animCount,
-            position: {
-                x: this.midX,
-                y: this.maxY,
-            },
+            position,
             anchorRatios: {
                 x: 0.5,
                 y: 1,

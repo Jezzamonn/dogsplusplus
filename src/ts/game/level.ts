@@ -2,6 +2,7 @@ import { lerp } from "../util";
 import { physFromPx, PHYSICS_SCALE, Point, rng } from "./constants";
 import { PlayerController } from "./controller/player-controller";
 import { RandomController } from "./controller/random-controller";
+import { StandController } from "./controller/stand-controller";
 import { Dog } from "./entity/dog";
 import { Entity } from "./entity/entity";
 import { Game } from "./game";
@@ -26,9 +27,10 @@ export class Level {
 
         for (let i = 0; i < 40; i++) {
             const ent = new Dog(this);
-            ent.midX = lerp(0, TILE_SIZE * this.width, rng());
+            ent.midX = lerp(1, TILE_SIZE * (this.width - 1), rng());
             ent.maxY = lerp(0, TILE_SIZE * 3, rng());
-            ent.controller = new RandomController();
+            // ent.controller = new RandomController();
+            ent.controller = new StandController();
 
             this.entities.push(ent);
         }
@@ -75,6 +77,15 @@ export class Level {
 
     get height() {
         return this.tiles.length;
+    }
+
+    getPlayer() {
+        for (const entity of this.entities) {
+            if (entity.controller instanceof PlayerController) {
+                return entity;
+            }
+        }
+        return undefined;
     }
 
 

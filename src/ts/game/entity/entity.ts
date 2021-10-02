@@ -4,6 +4,8 @@ import { Level, Tile, TILE_SIZE } from "../level";
 
 const MAX_MOVEMENT_PER_STEP = TILE_SIZE;
 
+let entityCounter = 0;
+
 export enum FacingDir {
     LEFT,
     RIGHT,
@@ -24,6 +26,8 @@ export class Entity {
     xDampAmt = (1 / 8) * PHYSICS_SCALE * FPS * FPS;
     facingDir = FacingDir.RIGHT;
     running = false;
+
+    index = entityCounter++;
 
     animCount: number = 0;
 
