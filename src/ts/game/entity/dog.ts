@@ -8,7 +8,8 @@ import { lerp } from "../../util";
 Aseprite.loadImage({ name: "puppy", basePath: "sprites/" });
 
 export class Dog extends Entity {
-    walkSpeed = 1.2 * PHYSICS_SCALE * FPS;
+    walkSpeed = 1 * PHYSICS_SCALE * FPS;
+    runSpeed = 1.5 * PHYSICS_SCALE * FPS;
     jumpSpeed = 3 * PHYSICS_SCALE * FPS;
 
     constructor(level: Level) {
@@ -24,14 +25,18 @@ export class Dog extends Entity {
         this.debugColor = undefined;
     }
 
+    get xMoveSpeed(): number {
+        return this.running ? this.runSpeed : this.walkSpeed;
+    }
+
     moveLeft(dt: number) {
         this.facingDir = FacingDir.LEFT;
-        this.dx = -this.walkSpeed;
+        this.dx = -this.xMoveSpeed;
     }
 
     moveRight(dt: number) {
         this.facingDir = FacingDir.RIGHT;
-        this.dx = this.walkSpeed;
+        this.dx = this.xMoveSpeed;
     }
 
     jump() {
@@ -53,11 +58,17 @@ export class Dog extends Entity {
             animName = "run";
         }
 
+        let animCount = this.animCount;
+
+        if (this.running) {
+            animCount *= 2;
+        }
+
         Aseprite.drawAnimation({
             context,
             image: "puppy",
             animationName: animName,
-            time: this.animCount,
+            time: animCount,
             position: {
                 x: this.midX,
                 y: this.maxY,

@@ -1,14 +1,47 @@
 const disableDefaultKeys = new Set(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"]);
 
-export interface IKeys {
-    setUp(): void;
-    resetFrame(): void;
-    isPressed(keyCode: string): boolean;
-    wasPressedThisFrame(keyCode: string): boolean;
-    wasReleasedThisFrame(keyCode: string): boolean;
+export class IKeys {
+    setUp(): void {}
+    resetFrame(): void {}
+    isPressed(keyCode: string): boolean {
+        return false;
+    }
+    wasPressedThisFrame(keyCode: string): boolean {
+        return false;
+    }
+    wasReleasedThisFrame(keyCode: string): boolean {
+        return false;
+    }
+
+    anyIsPressed(keyCodes: string[]): boolean {
+        for (const keyCode of keyCodes) {
+            if (this.isPressed(keyCode)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    anyWasPressedThisFrame(keyCodes: string[]): boolean {
+        for (const keyCode of keyCodes) {
+            if (this.wasPressedThisFrame(keyCode)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    anyWasReleasedThisFrame(keyCodes: string[]): boolean {
+        for (const keyCode of keyCodes) {
+            if (this.wasReleasedThisFrame(keyCode)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
-class _Keys implements IKeys {
+class _Keys extends IKeys {
     #pressedKeys: Set<string> = new Set();
     #pressedThisFrame: Set<string> = new Set();
     #releasedThisFrame: Set<string> = new Set();
@@ -18,6 +51,7 @@ class _Keys implements IKeys {
         document.addEventListener('keydown', (evt) => {
             if (!this.#pressedKeys.has(evt.code)) {
                 this.#pressedThisFrame.add(evt.code);
+                // console.log(evt.code);
             }
             this.#pressedKeys.add(evt.code);
 
@@ -51,24 +85,6 @@ class _Keys implements IKeys {
 
 }
 
-class _NullKeys implements IKeys {
-
-    setUp(): void {}
-    resetFrame(): void {}
-
-    isPressed(keyCode: string): boolean {
-        return false;
-    }
-
-    wasPressedThisFrame(keyCode: string): boolean {
-        return false;
-    }
-
-    wasReleasedThisFrame(keyCode: string): boolean {
-        return false;
-    }
-}
-
 export const Keys = new _Keys();
 
-export const NullKeys = new _NullKeys();
+export const NullKeys = new IKeys();

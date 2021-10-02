@@ -2,6 +2,9 @@ import { Keys } from "../../keys";
 import { Entity } from "../entity/entity";
 import { Controller } from "./controller";
 
+const JUMP_KEYS = ["KeyZ", "Space"];
+const SHIFT_KEYS = ["ShiftLeft", "ShiftRight"];
+
 export class PlayerController extends Controller {
     update(entity: Entity, dt: number) {
         const onGround = entity.isStandingOnGround();
@@ -16,7 +19,10 @@ export class PlayerController extends Controller {
             entity.dampenX(dt);
         }
 
-        if (onGround && Keys.wasPressedThisFrame("ArrowUp")) {
+        entity.running = Keys.anyIsPressed(SHIFT_KEYS);
+
+        // Feels weird on release.
+        if (onGround && Keys.anyWasPressedThisFrame(JUMP_KEYS)) {
             entity.jump();
         }
     }

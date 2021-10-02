@@ -21,6 +21,7 @@ export class Entity {
     gravity = (1 / 8) * PHYSICS_SCALE * FPS * FPS;
     xDampAmt = (1 / 8) * PHYSICS_SCALE * FPS * FPS;
     facingDir = FacingDir.RIGHT;
+    running = false;
 
     animCount: number = 0;
 
