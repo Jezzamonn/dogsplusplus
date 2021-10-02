@@ -7,7 +7,7 @@ export class Game {
     canvas!: HTMLCanvasElement;
     context!: CanvasRenderingContext2D;
 
-    scale = 4;
+    scale = 3;
 
     level: Level;
 

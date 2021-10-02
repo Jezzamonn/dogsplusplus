@@ -1,6 +1,6 @@
 import { Entity } from "./entity";
 import * as Aseprite from "../../aseprite-js";
-import { PHYSICS_SCALE } from "../constants";
+import { PHYSICS_SCALE, rng } from "../constants";
 import { Level } from "../level";
 
 Aseprite.loadImage({name: "puppy", basePath: "sprites/"})
@@ -10,17 +10,27 @@ export class Player extends Entity {
     constructor(level: Level) {
         super(level);
 
+        this.animCount = rng();
+
         this.debugColor = undefined;
     }
 
+    onDownCollision() {
+        let startDy = this.dy;
+
+        super.onDownCollision();
+
+        this.dy = -0.6 * startDy;
+    }
+
     render(context: CanvasRenderingContext2D) {
-        super.render(context);
+        const animName = this.isStandingOnGround() ? 'idle' : 'run';
 
         Aseprite.drawAnimation({
             context,
             image: "puppy",
-            animationName: "run",
-            time: this.animCounter,
+            animationName: animName,
+            time: this.animCount,
             position: {
                 x: this.midX,
                 y: this.maxY,

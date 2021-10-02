@@ -4,7 +4,7 @@ import { Entity } from "./entity/entity";
 import { Player } from "./entity/player";
 import { Game } from "./game";
 
-const TILE_SIZE = 10;
+const TILE_SIZE = 10 * PHYSICS_SCALE;
 
 export enum Tile {
     AIR,
@@ -108,10 +108,29 @@ export class Level {
         if (tile == Tile.AIR) {
             return;
         }
-        const PX_TILE_SIZE = TILE_SIZE * PHYSICS_SCALE;
 
         context.fillStyle = '#33984b';
-        context.fillRect(PX_TILE_SIZE * renderPos.x, PX_TILE_SIZE * renderPos.y, PX_TILE_SIZE, PX_TILE_SIZE);
+        context.fillRect(TILE_SIZE * renderPos.x, TILE_SIZE * renderPos.y, TILE_SIZE, TILE_SIZE);
+    }
+
+    getTileFromCoord(coord: Point) {
+        const tileCoord = {
+            x: Math.floor(coord.x / TILE_SIZE),
+            y: Math.floor(coord.y / TILE_SIZE),
+        }
+        return this.getTile(tileCoord);
+    }
+
+    getTilePosFromCoord(coord: {x?: number, y?: number}, tilePos: {x?: number, y?: number}): number {
+        if (coord.x != null && tilePos.x != null) {
+            const tileX = Math.floor(coord.x / TILE_SIZE);
+            return tileX * TILE_SIZE + tilePos.x * (TILE_SIZE - 1);
+        }
+        if (coord.y != null && tilePos.y != null) {
+            const tileY = Math.floor(coord.y / TILE_SIZE);
+            return tileY * TILE_SIZE + tilePos.y * (TILE_SIZE - 1);
+        }
+        throw 'Invalid input';
     }
 }
 

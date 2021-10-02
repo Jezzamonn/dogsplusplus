@@ -10,6 +10,13 @@ export interface Point {
     y: number;
 }
 
+export enum Dir {
+    LEFT,
+    RIGHT,
+    UP,
+    DOWN,
+}
+
 export const PHYSICS_SCALE = 8;
 export const DEFAULT_PIXEL_SCALE = 3;
 
