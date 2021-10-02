@@ -8,7 +8,6 @@ import { clamp, clampInvLerp, invLerp, lerp } from "../../util";
 Aseprite.loadImage({ name: "puppy", basePath: "sprites/" });
 
 export class Dog extends Entity {
-
     walkSpeed = 1 * PHYSICS_SCALE * FPS;
     runSpeed = 1.5 * PHYSICS_SCALE * FPS;
     jumpSpeed = 3 * PHYSICS_SCALE * FPS;
@@ -30,26 +29,49 @@ export class Dog extends Entity {
     }
 
     update(dt: number) {
+        if (this.downDog) {
+            return;
+        }
+        this.regularUpdate(dt);
+    }
+
+    regularUpdate(dt: number) {
+        if (this.upDog) {
+            this.upDog.dy = this.dy;
+            this.upDog.regularUpdate(dt);
+        }
+
         super.update(dt);
 
         if (this.upDog) {
-            let xDiff = this.midX - this.upDog.midX;
+            const maxXDistAllowed = physFromPx(8);
+            const maxYDistAllowed = physFromPx(100);
+
+            let desiredMidX = this.midX;
+            let xDiff = desiredMidX - this.upDog.midX;
+
+            let xDiffAmt = clampInvLerp(Math.abs(xDiff), 0, physFromPx(10));
+            let height = lerp(physFromPx(10), physFromPx(7), xDiffAmt);
+            let desiredMaxY = this.maxY - height;
+            let yDiff = desiredMaxY - this.upDog.maxY;
+
             this.upDog.moveX(0.3 * xDiff);
+            this.upDog.moveY(0.3 * yDiff);
 
-            let xDiffAmt = clampInvLerp(Math.abs(xDiff), 0, physFromPx(4));
-
-            let height = lerp(physFromPx(7), physFromPx(10), xDiffAmt)
-
-            let yDiff = (this.y - height) - this.upDog.y;
-
-            // TODO: Something to make the tower more fragile
             // TODO: Knock things off.
-
-            this.upDog.moveY(yDiff);
-
             this.upDog.facingDir = this.facingDir;
 
-            this.upDog.dy = 0;
+            // Check to see if the dog is too far away
+            let newXDiff = desiredMidX - this.upDog.midX;
+            let newYDiff = desiredMaxY - this.upDog.maxY;
+            if (
+                Math.abs(newXDiff) > maxXDistAllowed ||
+                Math.abs(newYDiff) > maxYDistAllowed
+            ) {
+                // Release the dog!!
+                this.upDog.downDog = undefined;
+                this.upDog = undefined;
+            }
         }
     }
 
@@ -69,6 +91,7 @@ export class Dog extends Entity {
 
     jump() {
         this.dy = -this.jumpSpeed;
+        this.upDog?.jump();
     }
 
     regularRender(context: CanvasRenderingContext2D) {
@@ -78,9 +101,8 @@ export class Dog extends Entity {
 
         let animName = "idle";
         if (this.downDog) {
-            animName = 'idle';
-        }
-        else if (!this.isStandingOnGround()) {
+            animName = "idle";
+        } else if (!this.isStandingOnGround()) {
             const jumpAnimationSwitch = 0.5 * PHYSICS_SCALE * FPS;
             if (this.dy < -jumpAnimationSwitch) {
                 animName = "jump-up";
