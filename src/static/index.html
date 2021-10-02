@@ -1,31 +1,33 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=UA-105814606-2"
-    ></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
+    <head>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script
+            async
+            src="https://www.googletagmanager.com/gtag/js?id=UA-105814606-2"
+        ></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
 
-      gtag("config", "UA-105814606-2");
-    </script>
+            gtag("config", "UA-105814606-2");
+        </script>
 
-    <title>LD48</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link href="css/styles.css" rel="stylesheet" type="text/css" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
-    />
-  </head>
-  <body>
-    <div class="content"></div>
-    <script src="js/main.bundle.js"></script>
-  </body>
+        <title>LD48</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link href="css/styles.css" rel="stylesheet" type="text/css" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+        />
+    </head>
+    <body>
+        <div class="content">
+            <canvas class="canvas" width="800" height="600"></canvas>
+        </div>
+        <script src="js/main.bundle.js"></script>
+    </body>
 </html>
