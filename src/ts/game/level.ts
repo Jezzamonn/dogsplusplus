@@ -25,7 +25,7 @@ export class Level {
 
         this.initFromImage(image);
 
-        for (let i = 0; i < 40; i++) {
+        for (let i = 0; i < 20; i++) {
             const ent = new Dog(this);
             ent.midX = lerp(1, TILE_SIZE * (this.width - 1), rng());
             ent.maxY = lerp(0, TILE_SIZE * 3, rng());
