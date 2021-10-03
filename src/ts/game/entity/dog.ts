@@ -126,7 +126,7 @@ export class Dog extends Entity {
             let newXDiff = desiredMidX - this.upDog.midX;
             let newYDiff = desiredMaxY - this.upDog.maxY;
             if (
-                Math.abs(newXDiff) > maxXDistAllowed || yDiff > 0 && hitY
+                Math.abs(newXDiff) > maxXDistAllowed || hitY
             ) {
                 if (this.upDog.allDownDogsReachedDesiredPosition()) {
                     // un-stable the dog
