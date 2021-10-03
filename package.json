@@ -26,6 +26,12 @@
       ],
       "extensions": "json,png"
     },
+    "music": {
+      "patterns": [
+        "music/**"
+      ],
+      "extensions": "mp3"
+    },
     "sass": {
       "patterns": [
         "src/scss/**"
