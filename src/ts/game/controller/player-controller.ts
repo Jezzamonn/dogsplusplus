@@ -56,13 +56,23 @@ export class PlayerController extends Controller {
         if (keys.anyWasPressedThisFrame(JUMP_KEYS)) {
             if (onGround) {
                 downestDog.jump();
-            }
-            // The double jump is to split.
-            // TODO: Probably need to limit this to one per jump
-            else if (entity.downDog && this.doubleJumpCount < 1) {
-                entity.detach();
-                entity.jump();
-                this.doubleJumpCount++;
+            } else if (this.doubleJumpCount < 1) {
+                // The double jump is to split.
+                if (entity.downDog) {
+                    entity.detach();
+                    entity.jump();
+                    this.doubleJumpCount++;
+                }
+                else if (entity.upDog) {
+                    // Default to the second from the bottom.
+                    entity.controller = new StandController();
+                    entity.upDog.controller = this;
+
+                    let upDog = entity.upDog;
+                    upDog.detach();
+                    upDog.jump();
+                    this.doubleJumpCount++;
+                }
             }
         }
 

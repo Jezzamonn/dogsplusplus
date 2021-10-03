@@ -11,14 +11,16 @@ import { Keys } from "../keys";
 Sounds.loadSound({name: "forest", path: "music/"});
 
 const LEVELS = [
-    "level1",
-    "level2",
+    "win",
+    "intro",
+    "dogs-on-head",
+    "double-jump",
+    "select-a-dog",
+    "multibone",
+    "getting-stuck",
     "testlevel",
+    "win",
 ];
-
-const HINTS: {[key: string]: string} = {
-    'level1': 'Get the bone!\nArr'
-};
 
 export class Game {
 
@@ -106,6 +108,9 @@ export class Game {
 
     static async awaitAllLevels() {
         for (const levelName of LEVELS) {
+            if (Images.images[levelName]) {
+                continue;
+            }
             await Images.loadImage({name: levelName, path: 'levels/', extension: 'gif'});
         }
     }

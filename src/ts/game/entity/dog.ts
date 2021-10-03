@@ -241,12 +241,15 @@ export class Dog extends Entity {
                 this.controller = new StandController()
             } else {
                 // Oh no, we got stuck! Well, lets make the rest of the dogs run around for fun.
-                for (const dog of this.level.entitiesOfType(Dog)) {
-                    if (dog === this) {
-                        continue;
-                    }
-                    dog.controller = new RandomController();
-                }
+
+                // JK this breaks a lot of levels.
+
+                // for (const dog of this.level.entitiesOfType(Dog)) {
+                //     if (dog === this) {
+                //         continue;
+                //     }
+                //     dog.controller = new RandomController();
+                // }
             }
         }
         else {

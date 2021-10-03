@@ -21,7 +21,12 @@ const FONT_SIZE = FONT_SCALE * BASE_FONT_SIZE;
 const FONT_NAME = `${FONT_SIZE}px Babyblocks`;
 
 const HINTS: {[key: string]: string} = {
-    'level1': 'Ooh, a bone! Let\'s get it!\n\nArrow keys or WASD to move\nSpace or Z to jump'
+    'intro': `Ooh, a bone! Let's get it!\n\nArrow keys or WASD to move\nSpace or Z to jump`,
+    'double-jump': `With a dog on your head, jump in mid air to do a double jump`,
+    'select-a-dog': `Press up and down to change which dog you'll be when you\nsplit off with a double jump`,
+    'multibone': `Ooh! More bones! We have to get them ALL!\n\nPress R to reset`,
+    'getting-stuck': `If I'm alone and I get a bone, I'm not moving!\nYou'll have to reset the level with R.`,
+    'win': `You win!\nWelcome to the dog playground!`,
 };
 
 export enum Tile {
@@ -149,11 +154,17 @@ export class Level {
     }
 
     getTile(x: number, y: number) {
-        if (x < 0 || x >= this.width || y >= this.height) {
-            return Tile.GROUND;
+        if (x < 0) {
+            x = 0;
         }
         if (y < 0) {
-            return Tile.AIR;
+            y = 0;
+        }
+        if (x >= this.width) {
+            x = this.width - 1;
+        }
+        if (y >= this.height) {
+            y = this.height - 1;
         }
         return this.tiles[y][x];
     }
@@ -220,9 +231,11 @@ export class Level {
     }
 
     renderTiles(context: CanvasRenderingContext2D) {
-        const extraTiles = 20;
+        const extraTiles = 15;
         // Bottom up
         for (let y = this.height + extraTiles; y >= -extraTiles; y--) {
+            // TODO: Some rendering optimization
+
             for (let x = -extraTiles; x < this.width + extraTiles; x++) {
                 const tile = this.getTile(x, y);
 
