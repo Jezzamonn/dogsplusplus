@@ -28,7 +28,7 @@ const HINTS: {[key: string]: string} = {
     'multibone': `Ooh! More bones! We have to get them ALL!\n\nPress R to reset`,
     'getting-stuck': `If I'm alone and I get a bone, I'm not moving!\nYou'll have to reset the level with R.`,
     'unstable': `Turns out a tower of dogs is pretty unstable...`,
-    'move-tower': `This game needs more dogs`,
+    'move-tower': `So many dogs! This must be the last level!`,
     'win': `You win!\nWelcome to the dog playground!`,
 };
 
