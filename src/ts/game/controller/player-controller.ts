@@ -1,4 +1,4 @@
-import { Keys } from "../../keys";
+import { IKeys, Keys, NullKeys } from "../../keys";
 import { Dog } from "../entity/dog";
 import { Entity } from "../entity/entity";
 import { Controller } from "./controller";
@@ -16,24 +16,31 @@ export class PlayerController extends Controller {
             return;
         }
 
+        let keys = Keys;
+
+        // Sozza, can't move if you have a bone. Gotta reset.
+        if (entity.gotBone) {
+            keys = NullKeys;
+        }
+
         const downestDog = entity.downestDog;
 
         const onGround = downestDog.isStandingOnGround();
 
-        if (Keys.isPressed("ArrowLeft") && Keys.isPressed("ArrowRight")) {
+        if (keys.isPressed("ArrowLeft") && keys.isPressed("ArrowRight")) {
             // nothing
-        } else if (Keys.isPressed("ArrowLeft")) {
+        } else if (keys.isPressed("ArrowLeft")) {
             downestDog.moveLeft(dt);
-        } else if (Keys.isPressed("ArrowRight")) {
+        } else if (keys.isPressed("ArrowRight")) {
             downestDog.moveRight(dt);
         } else {
             downestDog.dampenX(dt);
         }
 
-        downestDog.running = Keys.anyIsPressed(SHIFT_KEYS);
+        downestDog.running = keys.anyIsPressed(SHIFT_KEYS);
 
         // Feels weird on release.
-        if (Keys.anyWasPressedThisFrame(JUMP_KEYS)) {
+        if (keys.anyWasPressedThisFrame(JUMP_KEYS)) {
             if (onGround) {
                 downestDog.jump();
             }
@@ -47,14 +54,14 @@ export class PlayerController extends Controller {
 
         if (!PlayerController.hasMovedDown) {
             // Quick hack to allow for switching which dog you are.
-            if (Keys.wasPressedThisFrame("ArrowUp")) {
+            if (keys.wasPressedThisFrame("ArrowUp")) {
                 if (entity.upDog) {
                     entity.controller = new StandController();
                     entity.upDog.controller = this;
                     PlayerController.hasMovedDown = true;
                 }
             }
-            else if (Keys.wasPressedThisFrame("ArrowDown")) {
+            else if (keys.wasPressedThisFrame("ArrowDown")) {
                 if (entity.downDog) {
                     entity.controller = new StandController();
                     entity.downDog.controller = this;

@@ -44,6 +44,7 @@ export class Game {
 
         this.camera = focusCamera;
 
+        Sounds.loadMuteState();
         Sounds.setSong("forest");
     }
 
@@ -53,7 +54,7 @@ export class Game {
 
         this.camera.update(this, dt);
 
-        if (Keys.isPressed("KeyM")) {
+        if (Keys.wasPressedThisFrame("KeyM")) {
             Sounds.toggleMute();
         }
     }

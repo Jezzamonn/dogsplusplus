@@ -85,6 +85,6 @@ class _Keys extends IKeys {
 
 }
 
-export const Keys = new _Keys();
+export const Keys: IKeys = new _Keys();
 
 export const NullKeys = new IKeys();

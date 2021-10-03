@@ -84,7 +84,7 @@ export class Dog extends Entity {
 
         this.moveUpDog(dt);
 
-        if (this.downDog == undefined) {
+        if (this.canPickUpOtherDog()) {
             this.checkForUpDogs();
         }
 
@@ -174,6 +174,18 @@ export class Dog extends Entity {
         }
     }
 
+    canPickUpOtherDog(): boolean {
+        if (this.downDog) {
+            return false;
+        }
+
+        if (this.gotBone) {
+            return false;
+        }
+
+        return true;
+    }
+
     canBePickedUp(): boolean {
         if (this.downDog) {
             return false;
@@ -220,11 +232,30 @@ export class Dog extends Entity {
         bone.done = true;
         this.gotBone = true;
 
-        if (this.upDog && this.controller instanceof PlayerController) {
-            this.upDog.controller = this.controller;
+        if (this.controller instanceof PlayerController) {
+            if (this.downDog) {
+                this.downDog.controller = this.controller;
+                this.controller = new StandController()
+            } else if (this.upDog) {
+                this.upDog.controller = this.controller;
+                this.controller = new StandController()
+            } else {
+                // Oh no, we got stuck! Well, lets make the rest of the dogs run around for fun.
+                for (const dog of this.level.entitiesOfType(Dog)) {
+                    if (dog === this) {
+                        continue;
+                    }
+                    dog.controller = new RandomController();
+                }
+            }
+        }
+        else {
+            this.controller = new StandController();
+        }
+
+        if (this.upDog) {
             this.upDog.detach();
         }
-        this.controller = new StandController();
     }
 
     forAllUpDogs(fn: (dog: Dog) => any) {

@@ -50,7 +50,7 @@ export class Level {
 
         this.initFromImage(image);
 
-        for (let i = 0; i < 20; i++) {
+        for (let i = 0; i < 19; i++) {
             const ent = new Dog(this);
             ent.midX = lerp(1, TILE_SIZE * (this.width - 1), rng());
             ent.maxY = lerp(0, TILE_SIZE * 3, rng());
@@ -67,10 +67,22 @@ export class Level {
 
         this.entities.push(player);
 
-        const bone = new Bone(this);
-        bone.midX = 5.5 * TILE_SIZE;
-        bone.midY = 5.5 * TILE_SIZE;
-        this.entities.push(bone);
+        for (let i = 0; i < 10; i++) {
+            let x: number;
+            let y: number;
+            while (true) {
+                x = Math.floor(this.width * rng());
+                y = Math.floor(this.height * rng());
+                if (!isGroundLikeTile(this.getTile(x, y))) {
+                    break;
+                }
+            }
+
+            const bone = new Bone(this);
+            bone.midX = (x + 0.5) * TILE_SIZE;
+            bone.midY = (y + 0.5) * TILE_SIZE;
+            this.entities.push(bone);
+        }
     }
 
     initFromImage(image: HTMLImageElement): void {
@@ -116,6 +128,10 @@ export class Level {
             }
         }
         return undefined;
+    }
+
+    entitiesOfType<T extends Entity>(clazz: new (...args: any[]) => T): T[] {
+        return this.entities.filter(ent => ent instanceof clazz) as T[];
     }
 
     getTile(x: number, y: number) {

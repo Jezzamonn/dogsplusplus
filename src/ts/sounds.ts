@@ -141,12 +141,12 @@ class _Sounds {
     loadMuteState() {
         const storedMuteString = window.sessionStorage.getItem('mute') ?? "";
 
-        // // Quick thing to make local dev default to music off.
-        // if (storedMuteString == '' && window.location.href.includes('localhost')) {
-        //     console.log('Disabling music for local development');
-        //     this.muteState = MuteState.MUSIC_OFF;
-        //     return;
-        // }
+        // Quick thing to make local dev default to music off.
+        if (storedMuteString == '' && window.location.href.includes('localhost')) {
+            console.log('Disabling music for local development');
+            this.muteState = MuteState.MUSIC_OFF;
+            return;
+        }
 
         let muteState = parseInt(storedMuteString);
         if (muteState != MuteState.PLAY_ALL &&
