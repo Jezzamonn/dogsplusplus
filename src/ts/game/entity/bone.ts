@@ -25,7 +25,7 @@ export class Bone extends Entity {
             frame: 0,
             position: {
                 x: this.midX,
-                y: this.midY + lerp(-physFromPx(float), physFromPx(float), loop(this.animCount)),
+                y: this.midY + physFromPx(float) * Math.sin(2 * Math.PI * 0.75 * this.animCount),
             },
             anchorRatios: {
                 x: 0.5, y: 0.5,
