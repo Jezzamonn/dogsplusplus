@@ -15,7 +15,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 18 },
     "sourceSize": { "w": 18, "h": 18 },
-    "duration": 100
+    "duration": 550
    },
    {
     "filename": "puppy 2.aseprite",
@@ -24,7 +24,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 18 },
     "sourceSize": { "w": 18, "h": 18 },
-    "duration": 100
+    "duration": 233
    },
    {
     "filename": "puppy 3.aseprite",
@@ -33,7 +33,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 18 },
     "sourceSize": { "w": 18, "h": 18 },
-    "duration": 100
+    "duration": 1100
    },
    {
     "filename": "puppy 4.aseprite",
@@ -42,7 +42,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 18 },
     "sourceSize": { "w": 18, "h": 18 },
-    "duration": 100
+    "duration": 233
    },
    {
     "filename": "puppy 5.aseprite",
@@ -51,7 +51,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 18 },
     "sourceSize": { "w": 18, "h": 18 },
-    "duration": 100
+    "duration": 550
    },
    {
     "filename": "puppy 6.aseprite",
@@ -87,11 +87,92 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 18 },
     "sourceSize": { "w": 18, "h": 18 },
-    "duration": 100
+    "duration": 550
    },
    {
     "filename": "puppy 10.aseprite",
     "frame": { "x": 55, "y": 19, "w": 18, "h": 18 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 18 },
+    "sourceSize": { "w": 18, "h": 18 },
+    "duration": 233
+   },
+   {
+    "filename": "puppy 11.aseprite",
+    "frame": { "x": 55, "y": 37, "w": 18, "h": 18 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 18 },
+    "sourceSize": { "w": 18, "h": 18 },
+    "duration": 1100
+   },
+   {
+    "filename": "puppy 12.aseprite",
+    "frame": { "x": 73, "y": 1, "w": 18, "h": 18 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 18 },
+    "sourceSize": { "w": 18, "h": 18 },
+    "duration": 233
+   },
+   {
+    "filename": "puppy 13.aseprite",
+    "frame": { "x": 73, "y": 19, "w": 18, "h": 18 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 18 },
+    "sourceSize": { "w": 18, "h": 18 },
+    "duration": 550
+   },
+   {
+    "filename": "puppy 14.aseprite",
+    "frame": { "x": 73, "y": 37, "w": 18, "h": 18 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 18 },
+    "sourceSize": { "w": 18, "h": 18 },
+    "duration": 100
+   },
+   {
+    "filename": "puppy 15.aseprite",
+    "frame": { "x": 91, "y": 1, "w": 18, "h": 18 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 18 },
+    "sourceSize": { "w": 18, "h": 18 },
+    "duration": 100
+   },
+   {
+    "filename": "puppy 16.aseprite",
+    "frame": { "x": 91, "y": 19, "w": 18, "h": 18 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 18 },
+    "sourceSize": { "w": 18, "h": 18 },
+    "duration": 100
+   },
+   {
+    "filename": "puppy 17.aseprite",
+    "frame": { "x": 91, "y": 37, "w": 18, "h": 18 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 18 },
+    "sourceSize": { "w": 18, "h": 18 },
+    "duration": 100
+   },
+   {
+    "filename": "puppy 18.aseprite",
+    "frame": { "x": 109, "y": 1, "w": 18, "h": 18 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 18 },
+    "sourceSize": { "w": 18, "h": 18 },
+    "duration": 100
+   },
+   {
+    "filename": "puppy 19.aseprite",
+    "frame": { "x": 109, "y": 19, "w": 18, "h": 18 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 18 },
@@ -104,18 +185,19 @@
   "version": "1.2.29",
   "image": "puppy.png",
   "format": "RGBA8888",
-  "size": { "w": 74, "h": 66 },
+  "size": { "w": 128, "h": 66 },
   "scale": "1",
   "frameTags": [
    { "name": "idle", "from": 0, "to": 0, "direction": "forward" },
-   { "name": "eat", "from": 1, "to": 2, "direction": "forward" },
-   { "name": "riding-up", "from": 3, "to": 3, "direction": "forward" },
-   { "name": "riding-mid", "from": 4, "to": 4, "direction": "forward" },
-   { "name": "riding-down", "from": 5, "to": 5, "direction": "forward" },
-   { "name": "run", "from": 6, "to": 7, "direction": "forward" },
-   { "name": "jump-up", "from": 8, "to": 8, "direction": "forward" },
-   { "name": "jump-mid", "from": 9, "to": 9, "direction": "forward" },
-   { "name": "jump-down", "from": 10, "to": 10, "direction": "forward" }
+   { "name": "boop", "from": 1, "to": 5, "direction": "forward" },
+   { "name": "eat", "from": 6, "to": 7, "direction": "forward" },
+   { "name": "riding-up", "from": 8, "to": 8, "direction": "forward" },
+   { "name": "riding-mid", "from": 9, "to": 13, "direction": "forward" },
+   { "name": "riding-down", "from": 14, "to": 14, "direction": "forward" },
+   { "name": "run", "from": 15, "to": 16, "direction": "forward" },
+   { "name": "jump-up", "from": 17, "to": 17, "direction": "forward" },
+   { "name": "jump-mid", "from": 18, "to": 18, "direction": "forward" },
+   { "name": "jump-down", "from": 19, "to": 19, "direction": "forward" }
   ]
  }
 }

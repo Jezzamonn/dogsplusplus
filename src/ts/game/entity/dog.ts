@@ -8,6 +8,7 @@ import { PlayerController } from "../controller/player-controller";
 import { RandomController } from "../controller/random-controller";
 import { Bone } from "./bone";
 import { StandController } from "../controller/stand-controller";
+import { Sounds } from "../../sounds";
 
 Aseprite.loadImage({ name: "puppy", basePath: "sprites/" });
 
@@ -214,17 +215,17 @@ export class Dog extends Entity {
     }
 
     checkForBones() {
-        for (const ent of this.level.entities) {
-            if (ent === this) {
+        for (const bone of this.level.entitiesOfType(Bone)) {
+            if (bone === this) {
                 continue;
             }
 
-            if (!(ent instanceof Bone)) {
+            if (bone.done) {
                 continue;
             }
 
-            if (this.isTouchingEntity(ent)) {
-                this.getBone(ent);
+            if (this.isTouchingEntity(bone)) {
+                this.getBone(bone);
             }
         }
     }
@@ -376,9 +377,11 @@ export class Dog extends Entity {
             y: this.maxY,
         }
 
+        let animCount = this.animCount;
+
         const jumpAnimationSwitch = 0.5 * PHYSICS_SCALE * FPS;
 
-        let animName = "idle";
+        let animName = "boop";
         if (this.gotBone) {
             animName = "eat";
         }
@@ -403,7 +406,9 @@ export class Dog extends Entity {
             animName = "run";
         }
 
-        let animCount = this.animCount;
+        if ((animName == 'boop' || animName == 'riding-mid') && Sounds.curSong) {
+            animCount = Sounds.curSong.currentTime;
+        }
 
         if (this.running) {
             animCount *= 2;

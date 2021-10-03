@@ -10,23 +10,32 @@ import { Keys } from "../keys";
 
 Sounds.loadSound({name: "forest", path: "music/"});
 
+const LEVELS = [
+    "level1",
+    "level2",
+    "testlevel",
+]
+
 export class Game {
 
     canvas!: HTMLCanvasElement;
     context!: CanvasRenderingContext2D;
 
-    scale = 3;
-
-    level: Level;
+    level!: Level;
     camera: Camera;
+    levelIndex = 0;
+
+    getLevelImage() {
+        const name = LEVELS[this.levelIndex];
+        return Images.images[name].image!
+    }
 
     constructor() {
-        this.level = new Level(this, Images.images["testlevel"].image!);
-
+        this.loadLevel();
 
         const focusCamera = new FocusCamera();
         focusCamera.getFocalPoint = () => {
-            const player = (this.level.getPlayer() as Dog).downestDog;
+            const player = (this.level.getPlayer() as Dog)?.downestDog;
             if (!player) {
                 return {x: 0, y: 0}
             }
@@ -36,7 +45,10 @@ export class Game {
             }
         }
         focusCamera.getDesiredScale = () => {
-            const player = (this.level.getPlayer() as Dog).downestDog;
+            const player = (this.level.getPlayer() as Dog)?.downestDog;
+            if (!player) {
+                return 3;
+            }
             const size = player.getDogSize();
             const totalHeight = physFromPx(10) * size;
             return physFromPx(GAME_HEIGHT_PX) / totalHeight;
@@ -55,11 +67,14 @@ export class Game {
         this.camera.update(this, dt);
 
         if (this.level.done) {
-            this.level.reset();
+            if (this.level.won) {
+                this.nextLevel();
+            }
+            this.loadLevel();
         }
 
         if (Keys.wasPressedThisFrame("KeyR")) {
-            this.level.reset();
+            this.loadLevel();
         }
 
         if (Keys.wasPressedThisFrame("KeyM")) {
@@ -67,9 +82,26 @@ export class Game {
         }
     }
 
+    nextLevel() {
+        this.levelIndex++;
+        if (this.levelIndex >= LEVELS.length) {
+            this.levelIndex = LEVELS.length - 1;
+        }
+    }
+
+    loadLevel() {
+        this.level = new Level(this, this.getLevelImage());
+    }
+
     render(context: CanvasRenderingContext2D): void {
         this.camera.applyToContext(context);
 
         this.level.render(context);
+    }
+
+    static async awaitAllLevels() {
+        for (const levelName of LEVELS) {
+            await Images.loadImage({name: levelName, path: 'levels/', extension: 'gif'});
+        }
     }
 }

@@ -48,16 +48,19 @@ export class Level {
     tiles: Tile[][] = [];
 
     done = false;
+    won = false;
 
     constructor(game: Game, image: HTMLImageElement) {
         this.game = game;
         this.image = image;
 
         this.initFromImage(this.image);
-        this.addInitialEntities();
     }
 
     initFromImage(image: HTMLImageElement): void {
+        this.entities = [];
+        this.tiles = [];
+
         // Init with empty stuff.
         for (let y = 0; y < image.height; y++) {
             const tileRow: Tile[] = [];
@@ -74,60 +77,39 @@ export class Level {
         const context = canvas.getContext("2d")!;
         context.drawImage(image, 0, 0, image.width, image.height);
 
+        let addedPlayer = false;
+
         for (let y = 0; y < image.height; y++) {
             for (let x = 0; x < image.width; x++) {
                 const colorString = pixelColorString(context, x, y);
 
-                if (colorString != "ffffff") {
+                if (colorString == '000000') {
                     this.tiles[y][x] = Tile.GROUND;
                 }
-            }
-        }
-    }
+                else if (colorString.startsWith('ff00') || colorString.startsWith('ff70')) {
+                    const dog = new Dog(this);
+                    dog.midX = x * TILE_SIZE + 0.5 * (TILE_SIZE - 1);
+                    dog.maxY = y * TILE_SIZE + 1 * (TILE_SIZE - 1);
+                    dog.controller = new StandController();
+                    this.entities.push(dog);
 
-    // Mostly debug
-    addInitialEntities() {
-        for (let i = 0; i < 18; i++) {
-            const ent = new Dog(this);
-            ent.midX = lerp(1, TILE_SIZE * (this.width - 1), rng());
-            ent.maxY = lerp(0, TILE_SIZE * 3, rng());
-            ent.controller = new RandomController();
-            // ent.controller = new StandController();
-
-            this.entities.push(ent);
-        }
-
-        const player = new Dog(this);
-        player.midX = lerp(0, TILE_SIZE * this.width, rng());
-        player.maxY = lerp(0, TILE_SIZE * (this.height - 1), rng());
-        player.controller = new PlayerController();
-
-        this.entities.push(player);
-
-        for (let i = 0; i < 2; i++) {
-            let x: number;
-            let y: number;
-            while (true) {
-                x = Math.floor(this.width * rng());
-                y = Math.floor(this.height * rng());
-                if (!isGroundLikeTile(this.getTile(x, y))) {
-                    break;
+                    if (colorString.startsWith('ff70')) {
+                        addedPlayer = true;
+                        dog.controller = new PlayerController();
+                    }
+                }
+                else if (colorString == 'ffff00') {
+                    const bone = new Bone(this);
+                    bone.midX = x * TILE_SIZE + 0.5 * (TILE_SIZE - 1);
+                    bone.midY = y * TILE_SIZE + 0.5 * (TILE_SIZE - 1);
+                    this.entities.push(bone);
                 }
             }
-
-            const bone = new Bone(this);
-            bone.midX = (x + 0.5) * TILE_SIZE;
-            bone.midY = (y + 0.5) * TILE_SIZE;
-            this.entities.push(bone);
         }
-    }
 
-    reset() {
-        this.done = false;
-        this.entities = [];
-        this.tiles = [];
-        this.initFromImage(this.image);
-        this.addInitialEntities();
+        if (!addedPlayer) {
+            console.log('No player!');
+        }
     }
 
     get width() {
@@ -182,6 +164,7 @@ export class Level {
         const endBones = this.numBones();
 
         if (startBones > 0 && endBones == 0) {
+            this.won = true;
             delay(1000).then(() => this.done = true);
         }
     }
