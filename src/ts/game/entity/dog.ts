@@ -228,10 +228,6 @@ export class Dog extends Entity {
 
     getBone(bone: Bone) {
         // TODO: Disable the dog, somehow? And select the dog above.
-        this.detach();
-        bone.done = true;
-        this.gotBone = true;
-
         if (this.controller instanceof PlayerController) {
             if (this.downDog) {
                 this.downDog.controller = this.controller;
@@ -253,10 +249,25 @@ export class Dog extends Entity {
             this.controller = new StandController();
         }
 
-        if (this.upDog) {
-            this.upDog.detach();
+        if (this.upDog && this.downDog) {
+            this.upDog.downDog = this.downDog;
+            this.downDog.upDog = this.upDog;
+
+            this.upDog = undefined;
+            this.downDog = undefined;
+            this.hasTouchedGroundSinceBeingDropped = false;
         }
-    }
+        else {
+            this.detach();
+
+            if (this.upDog) {
+                this.upDog.detach();
+            }
+        }
+
+        bone.done = true;
+        this.gotBone = true;
+}
 
     forAllUpDogs(fn: (dog: Dog) => any) {
         let upDog: Dog = this;
