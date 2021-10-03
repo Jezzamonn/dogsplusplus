@@ -6,6 +6,8 @@ import { Keys } from "../../keys";
 import { clamp, clampInvLerp, easeInOut, invLerp, lerp } from "../../util";
 import { PlayerController } from "../controller/player-controller";
 import { RandomController } from "../controller/random-controller";
+import { Bone } from "./bone";
+import { StandController } from "../controller/stand-controller";
 
 Aseprite.loadImage({ name: "puppy", basePath: "sprites/" });
 
@@ -19,7 +21,8 @@ export class Dog extends Entity {
     downDog?: Dog;
 
     reachedDesiredPosition = false;
-    canBePickedUp = false;
+    hasTouchedGroundSinceBeingDropped = false;
+    gotBone = false;
 
     hue: number = 0;
 
@@ -84,15 +87,17 @@ export class Dog extends Entity {
             this.checkForUpDogs();
         }
 
+        this.checkForBones();
+
         if (this.isStandingOnGround()) {
-            this.canBePickedUp = true;
+            this.hasTouchedGroundSinceBeingDropped = true;
         }
     }
 
     moveUpDog(dt: number) {
         if (this.downDog == undefined) {
             if (!this.reachedDesiredPosition) {
-                console.log(`${this.index} reset because I'm the down dog`);
+                // console.log(`${this.index} reset because I'm the down dog`);
             }
             this.reachedDesiredPosition = true;
         }
@@ -129,7 +134,7 @@ export class Dog extends Entity {
                 }
             }
             else if (this.upDog.reachedDesiredPosition == false) {
-                console.log(`${this.index} at pos ${this.upDog.index}`);
+                // console.log(`${this.index} at pos ${this.upDog.index}`);
                 this.upDog.reachedDesiredPosition = true;
             }
         }
@@ -141,7 +146,7 @@ export class Dog extends Entity {
             this.downDog.upDog = undefined;
         }
         this.downDog = undefined;
-        this.canBePickedUp = false;
+        this.hasTouchedGroundSinceBeingDropped = false;
     }
 
     checkForUpDogs() {
@@ -154,15 +159,7 @@ export class Dog extends Entity {
                 continue;
             }
 
-            if (ent.downDog) {
-                continue;
-            }
-
-            // if (ent.upDog) {
-            //     continue;
-            // }
-
-            if (ent.hasPlayerInTower()) {
+            if (!ent.canBePickedUp()) {
                 continue;
             }
 
@@ -173,6 +170,58 @@ export class Dog extends Entity {
                 upMostDog.upDog = ent;
                 ent.downDog = upMostDog;
             }
+        }
+    }
+
+    canBePickedUp(): boolean {
+        if (this.downDog) {
+            return false;
+        }
+
+        if (!this.hasTouchedGroundSinceBeingDropped) {
+            return false;
+        }
+
+        if (this.gotBone) {
+            return false;
+        }
+
+        if (this.hasPlayerInTower()) {
+            return false;
+        }
+        return true;
+    }
+
+    checkForBones() {
+        if (!this.hasPlayerInTower()) {
+            return;
+        }
+
+        for (const ent of this.level.entities) {
+            if (ent === this) {
+                continue;
+            }
+
+            if (!(ent instanceof Bone)) {
+                continue;
+            }
+
+            if (this.isTouchingEntity(ent)) {
+                this.getBone(ent);
+            }
+        }
+    }
+
+    getBone(bone: Bone) {
+        // TODO: Disable the dog, somehow? And select the dog above.
+        this.detach();
+        bone.done = true;
+        this.gotBone = true;
+
+        if (this.upDog && this.controller instanceof PlayerController) {
+            this.upDog.controller = this.controller;
+            this.controller = new StandController();
+            this.upDog.detach();
         }
     }
 
@@ -275,7 +324,10 @@ export class Dog extends Entity {
         const jumpAnimationSwitch = 0.5 * PHYSICS_SCALE * FPS;
 
         let animName = "idle";
-        if (this.downDog) {
+        if (this.gotBone) {
+            animName = "eat";
+        }
+        else if (this.downDog) {
             position.y += physFromPx(1);
             if (this.dy < -jumpAnimationSwitch) {
                 animName = "riding-up";

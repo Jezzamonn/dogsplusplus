@@ -7,6 +7,7 @@ import { Dog } from "./entity/dog";
 import { Entity } from "./entity/entity";
 import { Game } from "./game";
 import * as Images from "./../images";
+import { Bone } from "./entity/bone";
 
 export const TILE_SIZE = 10 * PHYSICS_SCALE;
 export const SPRITE_TILE_SIZE = 10;
@@ -36,7 +37,7 @@ const tilePositions = [
     {x: 2, y: 0},
     {x: 4, y: 0},
     {x: 0, y: 0},
-]
+];
 
 export class Level {
     game: Game;
@@ -65,6 +66,11 @@ export class Level {
         player.controller = new PlayerController();
 
         this.entities.push(player);
+
+        const bone = new Bone(this);
+        bone.midX = 5.5 * TILE_SIZE;
+        bone.midY = 5.5 * TILE_SIZE;
+        this.entities.push(bone);
     }
 
     initFromImage(image: HTMLImageElement): void {
@@ -126,6 +132,13 @@ export class Level {
         for (const entity of this.entities) {
             entity.update(dt);
         }
+
+        for (let i = this.entities.length-1; i >= 0; i--) {
+            const entity = this.entities[i];
+            if (entity.done) {
+                this.entities.splice(i, 1);
+            }
+        }
     }
 
     render(context: CanvasRenderingContext2D): void {
@@ -162,7 +175,8 @@ export class Level {
 
     renderTiles(context: CanvasRenderingContext2D) {
         const extraTiles = 20;
-        for (let y = -extraTiles; y < this.height + extraTiles; y++) {
+        // Bottom up
+        for (let y = this.height + extraTiles; y >= -extraTiles; y--) {
             for (let x = -extraTiles; x < this.width + extraTiles; x++) {
                 const tile = this.getTile(x, y);
 
@@ -200,7 +214,7 @@ export class Level {
     ) {
         // Very slight aliasing going on, so we +1 the size to avoid it :P
         context.drawImage(
-            Images.images["tiles"].image!,
+            Images.images["tiles2"].image!,
             SPRITE_TILE_GRID * tilePos.x,
             SPRITE_TILE_GRID * tilePos.y,
             SPRITE_TILE_GRID,

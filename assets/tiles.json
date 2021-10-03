@@ -1,6 +1,6 @@
 { "frames": [
    {
-    "filename": "tiles.aseprite",
+    "filename": "tiles2.aseprite",
     "frame": { "x": 1, "y": 1, "w": 128, "h": 128 },
     "rotated": false,
     "trimmed": false,

@@ -1,0 +1,22 @@
+{ "frames": [
+   {
+    "filename": "bone.aseprite",
+    "frame": { "x": 1, "y": 1, "w": 14, "h": 14 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 14, "h": 14 },
+    "sourceSize": { "w": 14, "h": 14 },
+    "duration": 200
+   }
+ ],
+ "meta": {
+  "app": "http://www.aseprite.org/",
+  "version": "1.2.29",
+  "image": "bone.png",
+  "format": "RGBA8888",
+  "size": { "w": 16, "h": 66 },
+  "scale": "1",
+  "frameTags": [
+  ]
+ }
+}

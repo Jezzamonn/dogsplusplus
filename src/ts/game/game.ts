@@ -32,7 +32,7 @@ export class Game {
             }
         }
         focusCamera.getDesiredScale = () => {
-            const player = this.level.getPlayer() as Dog;
+            const player = (this.level.getPlayer() as Dog).downestDog;
             const size = player.getDogSize();
             const totalHeight = physFromPx(10) * size;
             return physFromPx(GAME_HEIGHT_PX) / totalHeight;

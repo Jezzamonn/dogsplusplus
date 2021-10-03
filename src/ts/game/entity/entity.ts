@@ -26,6 +26,7 @@ export class Entity {
     xDampAmt = (1 / 8) * PHYSICS_SCALE * FPS * FPS;
     facingDir = FacingDir.RIGHT;
     running = false;
+    done = false;
 
     index = entityCounter++;
 
