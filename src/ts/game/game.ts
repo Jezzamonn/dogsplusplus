@@ -5,6 +5,10 @@ import { Camera } from "./camera/camera";
 import { FocusCamera } from "./camera/focus-camera";
 import { Dog } from "./entity/dog";
 import { PlayerController } from "./controller/player-controller";
+import { Sounds } from "../sounds";
+import { Keys } from "../keys";
+
+Sounds.loadSound({name: "forest", path: "music/"});
 
 export class Game {
 
@@ -39,6 +43,8 @@ export class Game {
         }
 
         this.camera = focusCamera;
+
+        Sounds.setSong("forest");
     }
 
     update(dt: number): void {
@@ -46,6 +52,10 @@ export class Game {
         this.level.update(dt);
 
         this.camera.update(this, dt);
+
+        if (Keys.isPressed("KeyM")) {
+            Sounds.toggleMute();
+        }
     }
 
     render(context: CanvasRenderingContext2D): void {

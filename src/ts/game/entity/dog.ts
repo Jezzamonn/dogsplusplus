@@ -197,7 +197,7 @@ export class Dog extends Entity {
         if (!this.hasPlayerInTower()) {
             return;
         }
-        console.log(this.index);
+        // console.log(this.index);
 
         for (const ent of this.level.entities) {
             if (ent === this) {
