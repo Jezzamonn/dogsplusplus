@@ -6,13 +6,37 @@ import { StandController } from "./controller/stand-controller";
 import { Dog } from "./entity/dog";
 import { Entity } from "./entity/entity";
 import { Game } from "./game";
+import * as Images from "./../images";
 
 export const TILE_SIZE = 10 * PHYSICS_SCALE;
+export const SPRITE_TILE_SIZE = 10;
+export const SPRITE_TILE_GRID = 16;
+export const SPRITE_TILE_OFFSET = (SPRITE_TILE_GRID - SPRITE_TILE_SIZE) / 2;
 
 export enum Tile {
     AIR,
     GROUND,
 }
+
+// Calculated by hand.
+const tilePositions = [
+    {x: 1, y: 0},
+    {x: 5, y: 1},
+    {x: 4, y: 1},
+    {x: 6, y: 0},
+    {x: 6, y: 1},
+    {x: 0, y: 1},
+    {x: 2, y: 1},
+    {x: 3, y: 0},
+    {x: 7, y: 1},
+    {x: 1, y: 1},
+    {x: 3, y: 1},
+    {x: 5, y: 0},
+    {x: 7, y: 0},
+    {x: 2, y: 0},
+    {x: 4, y: 0},
+    {x: 0, y: 0},
+]
 
 export class Level {
     game: Game;
@@ -64,7 +88,7 @@ export class Level {
             for (let x = 0; x < image.width; x++) {
                 const colorString = pixelColorString(context, x, y);
 
-                if (colorString != 'ffffff') {
+                if (colorString != "ffffff") {
                     this.tiles[y][x] = Tile.GROUND;
                 }
             }
@@ -88,13 +112,12 @@ export class Level {
         return undefined;
     }
 
-
-    getTile({x, y}: Point) {
-        if (y < 0) {
-            return Tile.AIR;
-        }
+    getTile(x: number, y: number) {
         if (x < 0 || x >= this.width || y >= this.height) {
             return Tile.GROUND;
+        }
+        if (y < 0) {
+            return Tile.AIR;
         }
         return this.tiles[y][x];
     }
@@ -114,34 +137,71 @@ export class Level {
     }
 
     renderTiles(context: CanvasRenderingContext2D) {
-        const extraTiles = 8;
+        const extraTiles = 12;
         for (let y = -extraTiles; y < this.height + extraTiles; y++) {
             for (let x = -extraTiles; x < this.width + extraTiles; x++) {
-                const tile = this.getTile({x, y});
+                const tile = this.getTile(x, y);
 
-                this.renderTile(context, tile, {x, y})
+                let tilePos = { x: 0, y: 0 };
+
+                if (tile == Tile.AIR) {
+                    continue;
+                }
+
+                if (tile == Tile.GROUND) {
+                    const leftGround = isGroundLikeTile(this.getTile(x - 1, y));
+                    const rightGround = isGroundLikeTile(
+                        this.getTile(x + 1, y)
+                    );
+                    const upGround = isGroundLikeTile(this.getTile(x, y - 1));
+                    const downGround = isGroundLikeTile(this.getTile(x, y + 1));
+
+                    const tileIndex =
+                        (+leftGround << 3) +
+                        (+rightGround << 2) +
+                        (+upGround << 1) +
+                        (+downGround << 0);
+                    tilePos = tilePositions[tileIndex];
+                }
+
+                this.renderTile(context, { x, y }, tilePos);
             }
         }
     }
 
-    renderTile(context: CanvasRenderingContext2D, tile: Tile, renderPos: Point) {
-        if (tile == Tile.AIR) {
-            return;
-        }
+    renderTile(
+        context: CanvasRenderingContext2D,
+        renderPos: Point,
+        tilePos: Point
+    ) {
+        context.fillStyle = "#33984b";
+        // context.fillRect(TILE_SIZE * renderPos.x, TILE_SIZE * renderPos.y, TILE_SIZE, TILE_SIZE);
 
-        context.fillStyle = '#33984b';
-        context.fillRect(TILE_SIZE * renderPos.x, TILE_SIZE * renderPos.y, TILE_SIZE, TILE_SIZE);
+        // Grr. Very slight aliasing going on :/
+        context.drawImage(
+            Images.images["tiles"].image!,
+            SPRITE_TILE_GRID * tilePos.x + SPRITE_TILE_OFFSET,
+            SPRITE_TILE_GRID * tilePos.y + SPRITE_TILE_OFFSET,
+            SPRITE_TILE_SIZE,
+            SPRITE_TILE_SIZE,
+            TILE_SIZE * renderPos.x,
+            TILE_SIZE * renderPos.y,
+            TILE_SIZE,
+            TILE_SIZE
+        );
     }
 
     getTileFromCoord(coord: Point) {
-        const tileCoord = {
-            x: Math.floor(coord.x / TILE_SIZE),
-            y: Math.floor(coord.y / TILE_SIZE),
-        }
-        return this.getTile(tileCoord);
+        return this.getTile(
+            Math.floor(coord.x / TILE_SIZE),
+            Math.floor(coord.y / TILE_SIZE)
+        );
     }
 
-    getTilePosFromCoord(coord: {x?: number, y?: number}, tilePos: {x?: number, y?: number}): number {
+    getTilePosFromCoord(
+        coord: { x?: number; y?: number },
+        tilePos: { x?: number; y?: number }
+    ): number {
         if (coord.x != null && tilePos.x != null) {
             const tileX = Math.floor(coord.x / TILE_SIZE);
             return tileX * TILE_SIZE + tilePos.x * (TILE_SIZE - 1);
@@ -150,11 +210,15 @@ export class Level {
             const tileY = Math.floor(coord.y / TILE_SIZE);
             return tileY * TILE_SIZE + tilePos.y * (TILE_SIZE - 1);
         }
-        throw 'Invalid input';
+        throw "Invalid input";
     }
 }
 
-function pixelColorString(context: CanvasRenderingContext2D, x: number, y: number): string {
+function pixelColorString(
+    context: CanvasRenderingContext2D,
+    x: number,
+    y: number
+): string {
     const colorArray = context.getImageData(x, y, 1, 1);
     return Array.from(colorArray.data.slice(0, 3))
         .map((d) => d.toString(16))
@@ -165,4 +229,8 @@ function pixelColorString(context: CanvasRenderingContext2D, x: number, y: numbe
             return s;
         })
         .join("");
+}
+
+function isGroundLikeTile(tile: Tile): boolean {
+    return tile == Tile.GROUND;
 }

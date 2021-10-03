@@ -44,6 +44,7 @@ function render() {
 
 async function loadAllImages() {
     await Images.loadImage({name: "testlevel", path: "levels/", extension: "gif"});
+    await Images.loadImage({name: "tiles", path: "sprites/", extension: "png"});
 }
 
 

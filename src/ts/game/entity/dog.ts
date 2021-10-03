@@ -13,7 +13,7 @@ export class Dog extends Entity {
 
     walkSpeed = 1 * PHYSICS_SCALE * FPS;
     runSpeed = 1.5 * PHYSICS_SCALE * FPS;
-    jumpSpeed = 2.3 * PHYSICS_SCALE * FPS;
+    jumpSpeed = 2.5 * PHYSICS_SCALE * FPS;
 
     upDog?: Dog;
     downDog?: Dog;

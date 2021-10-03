@@ -49,14 +49,14 @@ export class PlayerController extends Controller {
             // Quick hack to allow for switching which dog you are.
             if (Keys.wasPressedThisFrame("ArrowUp")) {
                 if (entity.upDog) {
-                    entity.controller = entity.upDog.controller;
+                    entity.controller = new StandController();
                     entity.upDog.controller = this;
                     PlayerController.hasMovedDown = true;
                 }
             }
             else if (Keys.wasPressedThisFrame("ArrowDown")) {
                 if (entity.downDog) {
-                    entity.controller = entity.downDog.controller;
+                    entity.controller = new StandController();
                     entity.downDog.controller = this;
                     PlayerController.hasMovedDown = true;
                 }
