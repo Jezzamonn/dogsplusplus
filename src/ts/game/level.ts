@@ -186,8 +186,8 @@ export class Level {
             SPRITE_TILE_SIZE,
             TILE_SIZE * renderPos.x,
             TILE_SIZE * renderPos.y,
-            TILE_SIZE,
-            TILE_SIZE
+            TILE_SIZE + 1,
+            TILE_SIZE + 1,
         );
     }
 
