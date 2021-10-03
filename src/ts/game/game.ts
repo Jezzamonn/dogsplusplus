@@ -54,6 +54,10 @@ export class Game {
 
         this.camera.update(this, dt);
 
+        if (Keys.wasPressedThisFrame("KeyR")) {
+            this.level.reset();
+        }
+
         if (Keys.wasPressedThisFrame("KeyM")) {
             Sounds.toggleMute();
         }

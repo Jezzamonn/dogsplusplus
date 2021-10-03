@@ -41,15 +41,49 @@ const tilePositions = [
 
 export class Level {
     game: Game;
+    image: HTMLImageElement;
 
     entities: Entity[] = [];
     tiles: Tile[][] = [];
 
     constructor(game: Game, image: HTMLImageElement) {
         this.game = game;
+        this.image = image;
 
-        this.initFromImage(image);
+        this.initFromImage(this.image);
+        this.addInitialEntities();
+    }
 
+    initFromImage(image: HTMLImageElement): void {
+        // Init with empty stuff.
+        for (let y = 0; y < image.height; y++) {
+            const tileRow: Tile[] = [];
+            for (let x = 0; x < image.width; x++) {
+                tileRow[x] = Tile.AIR;
+            }
+            this.tiles.push(tileRow);
+        }
+
+        // Gotta draw it to a canvas to get the pixels
+        const canvas = document.createElement("canvas");
+        canvas.width = image.width;
+        canvas.height = image.height;
+        const context = canvas.getContext("2d")!;
+        context.drawImage(image, 0, 0, image.width, image.height);
+
+        for (let y = 0; y < image.height; y++) {
+            for (let x = 0; x < image.width; x++) {
+                const colorString = pixelColorString(context, x, y);
+
+                if (colorString != "ffffff") {
+                    this.tiles[y][x] = Tile.GROUND;
+                }
+            }
+        }
+    }
+
+    // Mostly debug
+    addInitialEntities() {
         for (let i = 0; i < 19; i++) {
             const ent = new Dog(this);
             ent.midX = lerp(1, TILE_SIZE * (this.width - 1), rng());
@@ -85,32 +119,11 @@ export class Level {
         }
     }
 
-    initFromImage(image: HTMLImageElement): void {
-        // Init with empty stuff.
-        for (let y = 0; y < image.height; y++) {
-            const tileRow: Tile[] = [];
-            for (let x = 0; x < image.width; x++) {
-                tileRow[x] = Tile.AIR;
-            }
-            this.tiles.push(tileRow);
-        }
-
-        // Gotta draw it to a canvas to get the pixels
-        const canvas = document.createElement("canvas");
-        canvas.width = image.width;
-        canvas.height = image.height;
-        const context = canvas.getContext("2d")!;
-        context.drawImage(image, 0, 0, image.width, image.height);
-
-        for (let y = 0; y < image.height; y++) {
-            for (let x = 0; x < image.width; x++) {
-                const colorString = pixelColorString(context, x, y);
-
-                if (colorString != "ffffff") {
-                    this.tiles[y][x] = Tile.GROUND;
-                }
-            }
-        }
+    reset() {
+        this.entities = [];
+        this.tiles = [];
+        this.initFromImage(this.image);
+        this.addInitialEntities();
     }
 
     get width() {
