@@ -32,8 +32,12 @@ function doAnimationFrame(): void {
 }
 
 function fixedUpdate() {
-    game.update(timeStep);
-    Keys.resetFrame();
+    try {
+        game.update(timeStep);
+        Keys.resetFrame();
+    } catch (e) {
+        console.error(e);
+    }
 }
 
 function render() {

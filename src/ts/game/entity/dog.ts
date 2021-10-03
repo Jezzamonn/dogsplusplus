@@ -52,6 +52,7 @@ export class Dog extends Entity {
     }
 
     update(dt: number) {
+        // Dogs in a tower are updated with the base dog.
         if (this.downDog) {
             return;
         }
@@ -196,6 +197,7 @@ export class Dog extends Entity {
         if (!this.hasPlayerInTower()) {
             return;
         }
+        console.log(this.index);
 
         for (const ent of this.level.entities) {
             if (ent === this) {
@@ -220,9 +222,9 @@ export class Dog extends Entity {
 
         if (this.upDog && this.controller instanceof PlayerController) {
             this.upDog.controller = this.controller;
-            this.controller = new StandController();
             this.upDog.detach();
         }
+        this.controller = new StandController();
     }
 
     forAllUpDogs(fn: (dog: Dog) => any) {
@@ -244,6 +246,14 @@ export class Dog extends Entity {
 
         while (dog.upDog) {
             dog = dog.upDog;
+            if (dog.controller instanceof PlayerController) {
+                return true;
+            }
+        }
+
+        dog = this;
+        while (dog.downDog) {
+            dog = dog.downDog;
             if (dog.controller instanceof PlayerController) {
                 return true;
             }
