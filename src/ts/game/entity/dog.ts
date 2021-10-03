@@ -116,8 +116,9 @@ export class Dog extends Entity {
             const desiredMaxY = this.maxY - height;
             const yDiff = desiredMaxY - this.upDog.maxY;
 
-            const hitX = this.upDog.moveX(0.3 * xDiff);
-            const hitY = this.upDog.moveY(0.3 * yDiff);
+            const smoothAmt = 1 - Math.exp(-20 * dt);
+            const hitX = this.upDog.moveX(smoothAmt * xDiff);
+            const hitY = this.upDog.moveY(smoothAmt * yDiff);
 
             // TODO: Knock things off.
             this.upDog.facingDir = this.facingDir;
