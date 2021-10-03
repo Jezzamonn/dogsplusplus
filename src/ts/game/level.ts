@@ -129,6 +129,8 @@ export class Level {
     }
 
     render(context: CanvasRenderingContext2D): void {
+        this.renderBG(context);
+
         this.renderTiles(context);
 
         for (const entity of this.entities) {
@@ -136,8 +138,30 @@ export class Level {
         }
     }
 
+    renderBG(context: CanvasRenderingContext2D): void {
+        context.save();
+
+        context.resetTransform();
+        context.fillStyle = '#3b7d6e';
+        context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+
+        this.game.camera.applyToContext(context, 0.5);
+
+        const image = Images.images["trees"].image!;
+
+        context.drawImage(
+            image,
+            0.5 * this.width * TILE_SIZE / 2 - image.width * PHYSICS_SCALE / 2,
+            0.5 * this.height * TILE_SIZE / 2 - image.height * PHYSICS_SCALE / 2,
+            image.width * PHYSICS_SCALE,
+            image.height * PHYSICS_SCALE,
+        );
+
+        context.restore();
+    }
+
     renderTiles(context: CanvasRenderingContext2D) {
-        const extraTiles = 12;
+        const extraTiles = 20;
         for (let y = -extraTiles; y < this.height + extraTiles; y++) {
             for (let x = -extraTiles; x < this.width + extraTiles; x++) {
                 const tile = this.getTile(x, y);
@@ -174,20 +198,17 @@ export class Level {
         renderPos: Point,
         tilePos: Point
     ) {
-        context.fillStyle = "#33984b";
-        // context.fillRect(TILE_SIZE * renderPos.x, TILE_SIZE * renderPos.y, TILE_SIZE, TILE_SIZE);
-
-        // Grr. Very slight aliasing going on :/
+        // Very slight aliasing going on, so we +1 the size to avoid it :P
         context.drawImage(
             Images.images["tiles"].image!,
-            SPRITE_TILE_GRID * tilePos.x + SPRITE_TILE_OFFSET,
-            SPRITE_TILE_GRID * tilePos.y + SPRITE_TILE_OFFSET,
-            SPRITE_TILE_SIZE,
-            SPRITE_TILE_SIZE,
-            TILE_SIZE * renderPos.x,
-            TILE_SIZE * renderPos.y,
-            TILE_SIZE + 1,
-            TILE_SIZE + 1,
+            SPRITE_TILE_GRID * tilePos.x,
+            SPRITE_TILE_GRID * tilePos.y,
+            SPRITE_TILE_GRID,
+            SPRITE_TILE_GRID,
+            TILE_SIZE * renderPos.x - physFromPx(SPRITE_TILE_OFFSET),
+            TILE_SIZE * renderPos.y - physFromPx(SPRITE_TILE_OFFSET),
+            SPRITE_TILE_GRID * PHYSICS_SCALE + 1,
+            SPRITE_TILE_GRID * PHYSICS_SCALE + 1,
         );
     }
 

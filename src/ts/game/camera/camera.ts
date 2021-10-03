@@ -6,6 +6,6 @@ export class Camera {
 
     update(game: Game, dt: number) {}
 
-    applyToContext(context: CanvasRenderingContext2D) {}
+    applyToContext(context: CanvasRenderingContext2D, scale: number=1) {}
 
 }

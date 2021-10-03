@@ -49,15 +49,8 @@ export class Game {
     }
 
     render(context: CanvasRenderingContext2D): void {
-        this.renderBG(context);
-
         this.camera.applyToContext(context);
 
         this.level.render(context);
-    }
-
-    renderBG(context: CanvasRenderingContext2D): void {
-        context.fillStyle = `#00cdf9`;
-        context.fillRect(0, 0, context.canvas.width, context.canvas.height);
     }
 }

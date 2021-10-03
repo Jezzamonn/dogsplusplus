@@ -36,7 +36,9 @@ export class FocusCamera extends Camera {
         this.scale = Math.min(3, this.scale);
     }
 
-    applyToContext(context: CanvasRenderingContext2D) {
+    applyToContext(context: CanvasRenderingContext2D, scale: number = 1) {
+        context.resetTransform();
+
         // TODO: Figure out how to avoid the aliasing
         context.translate(
             screenPos.x * context.canvas.width,
@@ -48,7 +50,7 @@ export class FocusCamera extends Camera {
 
         context.scale(this.scale / PHYSICS_SCALE, this.scale / PHYSICS_SCALE);
 
-        context.translate(-this.curPos.x, -this.curPos.y);
+        context.translate(-scale * this.curPos.x, -scale * this.curPos.y);
     }
 
 
