@@ -107,7 +107,7 @@ export class Dog extends Entity {
         // TODO: These maxes should probably have dt worked into them somehow.
         // Also the 0.3 multipliers need to be updated for slowmo.
         if (this.upDog) {
-            const maxXDistAllowed = physFromPx(8);
+            const maxXDistAllowed = physFromPx(5);
 
             const desiredMidX = this.midX;
             const xDiff = desiredMidX - this.upDog.midX;

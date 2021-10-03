@@ -15,9 +15,11 @@ const LEVELS = [
     "dogs-on-head",
     "double-jump",
     "select-a-dog",
+    "unstable",
     "multibone",
     "getting-stuck",
     "testlevel",
+    "move-tower",
     "win",
 ];
 

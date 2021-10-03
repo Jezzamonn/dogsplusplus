@@ -22,10 +22,13 @@ const FONT_NAME = `${FONT_SIZE}px Babyblocks`;
 
 const HINTS: {[key: string]: string} = {
     'intro': `Ooh, a bone! Let's get it!\n\nArrow keys or WASD to move\nSpace or Z to jump`,
-    'double-jump': `With a dog on your head, jump in mid air to do a double jump`,
-    'select-a-dog': `Press up and down to change which dog you'll be when you\nsplit off with a double jump`,
+    'dogs-on-head': `Hm. This one is too high to jump to...`,
+    'double-jump': `With a dog on your head, jump in midair to do a double jump`,
+    'select-a-dog': `Press up and down to change which dog you'll be when you split off`,
     'multibone': `Ooh! More bones! We have to get them ALL!\n\nPress R to reset`,
     'getting-stuck': `If I'm alone and I get a bone, I'm not moving!\nYou'll have to reset the level with R.`,
+    'unstable': `Turns out a tower of dogs is pretty unstable...`,
+    'move-tower': `This game needs more dogs`,
     'win': `You win!\nWelcome to the dog playground!`,
 };
 
