@@ -4,12 +4,22 @@ import { Entity } from "../entity/entity";
 import { Controller } from "./controller";
 import { StandController } from "./stand-controller";
 
+const UP_KEYS = ["ArrowUp", "KeyW"];
+const DOWN_KEYS = ["ArrowDown", "KeyS"];
+const LEFT_KEYS = ["ArrowLeft", "KeyA"];
+const RIGHT_KEYS = ["ArrowRight", "KeyD"];
 const JUMP_KEYS = ["KeyZ", "Space"];
 const SHIFT_KEYS = ["ShiftLeft", "ShiftRight"];
 
 export class PlayerController extends Controller {
 
     static hasMovedDown = false;
+
+    doubleJumpCount = 0;
+
+    constructor() {
+        super();
+    }
 
     update(entity: Entity, dt: number) {
         if (!(entity instanceof Dog)) {
@@ -26,12 +36,15 @@ export class PlayerController extends Controller {
         const downestDog = entity.downestDog;
 
         const onGround = downestDog.isStandingOnGround();
+        if (onGround) {
+            this.doubleJumpCount = 0;
+        }
 
-        if (keys.isPressed("ArrowLeft") && keys.isPressed("ArrowRight")) {
+        if (keys.anyIsPressed(LEFT_KEYS) && keys.anyIsPressed(RIGHT_KEYS)) {
             // nothing
-        } else if (keys.isPressed("ArrowLeft")) {
+        } else if (keys.anyIsPressed(LEFT_KEYS)) {
             downestDog.moveLeft(dt);
-        } else if (keys.isPressed("ArrowRight")) {
+        } else if (keys.anyIsPressed(RIGHT_KEYS)) {
             downestDog.moveRight(dt);
         } else {
             downestDog.dampenX(dt);
@@ -44,24 +57,26 @@ export class PlayerController extends Controller {
             if (onGround) {
                 downestDog.jump();
             }
-            // The double jump is to split
-            else if (entity.downDog) {
+            // The double jump is to split.
+            // TODO: Probably need to limit this to one per jump
+            else if (entity.downDog && this.doubleJumpCount < 1) {
                 entity.detach();
                 entity.jump();
+                this.doubleJumpCount++;
             }
         }
 
 
         if (!PlayerController.hasMovedDown) {
             // Quick hack to allow for switching which dog you are.
-            if (keys.wasPressedThisFrame("ArrowUp")) {
+            if (keys.anyWasPressedThisFrame(UP_KEYS)) {
                 if (entity.upDog) {
                     entity.controller = new StandController();
                     entity.upDog.controller = this;
                     PlayerController.hasMovedDown = true;
                 }
             }
-            else if (keys.wasPressedThisFrame("ArrowDown")) {
+            else if (keys.anyWasPressedThisFrame(DOWN_KEYS)) {
                 if (entity.downDog) {
                     entity.controller = new StandController();
                     entity.downDog.controller = this;
