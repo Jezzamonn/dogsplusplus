@@ -8,6 +8,7 @@ import { Entity } from "./entity/entity";
 import { Game } from "./game";
 import * as Images from "./../images";
 import { Bone } from "./entity/bone";
+import delay from 'delay';
 
 export const TILE_SIZE = 10 * PHYSICS_SCALE;
 export const SPRITE_TILE_SIZE = 10;
@@ -45,6 +46,8 @@ export class Level {
 
     entities: Entity[] = [];
     tiles: Tile[][] = [];
+
+    done = false;
 
     constructor(game: Game, image: HTMLImageElement) {
         this.game = game;
@@ -84,7 +87,7 @@ export class Level {
 
     // Mostly debug
     addInitialEntities() {
-        for (let i = 0; i < 19; i++) {
+        for (let i = 0; i < 18; i++) {
             const ent = new Dog(this);
             ent.midX = lerp(1, TILE_SIZE * (this.width - 1), rng());
             ent.maxY = lerp(0, TILE_SIZE * 3, rng());
@@ -101,7 +104,7 @@ export class Level {
 
         this.entities.push(player);
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 2; i++) {
             let x: number;
             let y: number;
             while (true) {
@@ -120,6 +123,7 @@ export class Level {
     }
 
     reset() {
+        this.done = false;
         this.entities = [];
         this.tiles = [];
         this.initFromImage(this.image);
@@ -143,6 +147,10 @@ export class Level {
         return undefined;
     }
 
+    numBones() {
+        return this.entitiesOfType(Bone).length;
+    }
+
     entitiesOfType<T extends Entity>(clazz: new (...args: any[]) => T): T[] {
         return this.entities.filter(ent => ent instanceof clazz) as T[];
     }
@@ -158,6 +166,8 @@ export class Level {
     }
 
     update(dt: number): void {
+        const startBones = this.numBones();
+
         for (const entity of this.entities) {
             entity.update(dt);
         }
@@ -167,6 +177,12 @@ export class Level {
             if (entity.done) {
                 this.entities.splice(i, 1);
             }
+        }
+
+        const endBones = this.numBones();
+
+        if (startBones > 0 && endBones == 0) {
+            delay(1000).then(() => this.done = true);
         }
     }
 
