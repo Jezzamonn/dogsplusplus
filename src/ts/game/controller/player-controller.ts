@@ -9,7 +9,7 @@ const DOWN_KEYS = ["ArrowDown", "KeyS"];
 const LEFT_KEYS = ["ArrowLeft", "KeyA"];
 const RIGHT_KEYS = ["ArrowRight", "KeyD"];
 const JUMP_KEYS = ["KeyZ", "Space"];
-const SHIFT_KEYS = ["ShiftLeft", "ShiftRight"];
+const SHIFT_KEYS = ["ShiftLeft", "ShiftRight", "KeyX"];
 
 export class PlayerController extends Controller {
 
