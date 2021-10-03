@@ -206,12 +206,14 @@ export class Dog extends Entity {
         return true;
     }
 
-    checkForBones() {
-        if (!this.hasPlayerInTower()) {
-            return;
-        }
-        // console.log(this.index);
+    canGetBone(): boolean {
+        // if (!this.hasPlayerInTower()) {
+        //     return false;
+        // }
+        return true;
+    }
 
+    checkForBones() {
         for (const ent of this.level.entities) {
             if (ent === this) {
                 continue;
