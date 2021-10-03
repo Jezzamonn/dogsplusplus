@@ -6,6 +6,11 @@ html, body {
     background-color: black;
 }
 
+@font-face {
+    font-family: 'Babyblocks';
+    src: url('/font/ChevyRay - Babyblocks.ttf') format('truetype');
+}
+
 .content {
     width: 100vw;
     height: 100vh;

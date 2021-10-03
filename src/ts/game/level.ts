@@ -8,12 +8,21 @@ import { Entity } from "./entity/entity";
 import { Game } from "./game";
 import * as Images from "./../images";
 import { Bone } from "./entity/bone";
-import delay from 'delay';
+import delay from "delay";
 
 export const TILE_SIZE = 10 * PHYSICS_SCALE;
 export const SPRITE_TILE_SIZE = 10;
 export const SPRITE_TILE_GRID = 16;
 export const SPRITE_TILE_OFFSET = (SPRITE_TILE_GRID - SPRITE_TILE_SIZE) / 2;
+
+const BASE_FONT_SIZE = 8;
+const FONT_SCALE = 3;
+const FONT_SIZE = FONT_SCALE * BASE_FONT_SIZE;
+const FONT_NAME = `${FONT_SIZE}px Babyblocks`;
+
+const HINTS: {[key: string]: string} = {
+    'level1': 'Ooh, a bone! Let\'s get it!\n\nArrow keys or WASD to move\nSpace or Z to jump'
+};
 
 export enum Tile {
     AIR,
@@ -22,27 +31,27 @@ export enum Tile {
 
 // Calculated by hand.
 const tilePositions = [
-    {x: 1, y: 0},
-    {x: 5, y: 1},
-    {x: 4, y: 1},
-    {x: 6, y: 0},
-    {x: 6, y: 1},
-    {x: 0, y: 1},
-    {x: 2, y: 1},
-    {x: 3, y: 0},
-    {x: 7, y: 1},
-    {x: 1, y: 1},
-    {x: 3, y: 1},
-    {x: 5, y: 0},
-    {x: 7, y: 0},
-    {x: 2, y: 0},
-    {x: 4, y: 0},
-    {x: 0, y: 0},
+    { x: 1, y: 0 },
+    { x: 5, y: 1 },
+    { x: 4, y: 1 },
+    { x: 6, y: 0 },
+    { x: 6, y: 1 },
+    { x: 0, y: 1 },
+    { x: 2, y: 1 },
+    { x: 3, y: 0 },
+    { x: 7, y: 1 },
+    { x: 1, y: 1 },
+    { x: 3, y: 1 },
+    { x: 5, y: 0 },
+    { x: 7, y: 0 },
+    { x: 2, y: 0 },
+    { x: 4, y: 0 },
+    { x: 0, y: 0 },
 ];
 
 export class Level {
     game: Game;
-    image: HTMLImageElement;
+    imageName: string;
 
     entities: Entity[] = [];
     tiles: Tile[][] = [];
@@ -50,11 +59,12 @@ export class Level {
     done = false;
     won = false;
 
-    constructor(game: Game, image: HTMLImageElement) {
+    constructor(game: Game, imageName: string) {
         this.game = game;
-        this.image = image;
+        this.imageName = imageName;
 
-        this.initFromImage(this.image);
+        const image = Images.images[imageName].image!
+        this.initFromImage(image);
     }
 
     initFromImage(image: HTMLImageElement): void {
@@ -83,22 +93,23 @@ export class Level {
             for (let x = 0; x < image.width; x++) {
                 const colorString = pixelColorString(context, x, y);
 
-                if (colorString == '000000') {
+                if (colorString == "000000") {
                     this.tiles[y][x] = Tile.GROUND;
-                }
-                else if (colorString.startsWith('ff00') || colorString.startsWith('ff70')) {
+                } else if (
+                    colorString.startsWith("ff00") ||
+                    colorString.startsWith("ff70")
+                ) {
                     const dog = new Dog(this);
                     dog.midX = x * TILE_SIZE + 0.5 * (TILE_SIZE - 1);
                     dog.maxY = y * TILE_SIZE + 1 * (TILE_SIZE - 1);
                     dog.controller = new StandController();
                     this.entities.push(dog);
 
-                    if (colorString.startsWith('ff70')) {
+                    if (colorString.startsWith("ff70")) {
                         addedPlayer = true;
                         dog.controller = new PlayerController();
                     }
-                }
-                else if (colorString == 'ffff00') {
+                } else if (colorString == "ffff00") {
                     const bone = new Bone(this);
                     bone.midX = x * TILE_SIZE + 0.5 * (TILE_SIZE - 1);
                     bone.midY = y * TILE_SIZE + 0.5 * (TILE_SIZE - 1);
@@ -108,7 +119,7 @@ export class Level {
         }
 
         if (!addedPlayer) {
-            console.log('No player!');
+            console.log("No player!");
         }
     }
 
@@ -134,7 +145,7 @@ export class Level {
     }
 
     entitiesOfType<T extends Entity>(clazz: new (...args: any[]) => T): T[] {
-        return this.entities.filter(ent => ent instanceof clazz) as T[];
+        return this.entities.filter((ent) => ent instanceof clazz) as T[];
     }
 
     getTile(x: number, y: number) {
@@ -154,7 +165,7 @@ export class Level {
             entity.update(dt);
         }
 
-        for (let i = this.entities.length-1; i >= 0; i--) {
+        for (let i = this.entities.length - 1; i >= 0; i--) {
             const entity = this.entities[i];
             if (entity.done) {
                 this.entities.splice(i, 1);
@@ -165,7 +176,7 @@ export class Level {
 
         if (startBones > 0 && endBones == 0) {
             this.won = true;
-            delay(1000).then(() => this.done = true);
+            delay(1000).then(() => (this.done = true));
         }
     }
 
@@ -177,13 +188,18 @@ export class Level {
         for (const entity of this.entities) {
             entity.render(context);
         }
+
+        const hint = HINTS[this.imageName];
+        if (hint) {
+            this.renderText(context, hint);
+        }
     }
 
     renderBG(context: CanvasRenderingContext2D): void {
         context.save();
 
         context.resetTransform();
-        context.fillStyle = '#3b7d6e';
+        context.fillStyle = "#3b7d6e";
         context.fillRect(0, 0, context.canvas.width, context.canvas.height);
 
         this.game.camera.applyToContext(context, 0.5);
@@ -192,10 +208,12 @@ export class Level {
 
         context.drawImage(
             image,
-            0.5 * this.width * TILE_SIZE / 2 - image.width * PHYSICS_SCALE / 2,
-            0.5 * this.height * TILE_SIZE / 2 - image.height * PHYSICS_SCALE / 2,
+            (0.5 * this.width * TILE_SIZE) / 2 -
+                (image.width * PHYSICS_SCALE) / 2,
+            (0.5 * this.height * TILE_SIZE) / 2 -
+                (image.height * PHYSICS_SCALE) / 2,
             image.width * PHYSICS_SCALE,
-            image.height * PHYSICS_SCALE,
+            image.height * PHYSICS_SCALE
         );
 
         context.restore();
@@ -250,8 +268,50 @@ export class Level {
             TILE_SIZE * renderPos.x - physFromPx(SPRITE_TILE_OFFSET),
             TILE_SIZE * renderPos.y - physFromPx(SPRITE_TILE_OFFSET),
             SPRITE_TILE_GRID * PHYSICS_SCALE + 1,
-            SPRITE_TILE_GRID * PHYSICS_SCALE + 1,
+            SPRITE_TILE_GRID * PHYSICS_SCALE + 1
         );
+    }
+
+    renderText(context: CanvasRenderingContext2D, text: string) {
+        const fontFg = "#c7cfdd";
+        const fontBg = "#2a2f4e";
+
+        context.save();
+
+        context.resetTransform();
+
+        context.font = FONT_NAME;
+        context.textBaseline = "top";
+        context.textAlign = "center";
+        context.fillStyle = fontBg;
+
+        const x = context.canvas.width / 2;
+        const y = 2 * FONT_SCALE;
+
+        const offsets = [
+            { x: -1, y: 0 },
+            { x: 1, y: 0 },
+            { x: 0, y: 1 },
+            { x: 0, y: -1 },
+            { x: -1, y: -1 },
+            { x: -1, y: 1 },
+            { x: 1, y: -1 },
+            { x: 1, y: 1 },
+        ];
+        for (const offset of offsets) {
+            renderMultiLine(
+                context,
+                text,
+                x + FONT_SCALE * offset.x,
+                y + FONT_SCALE * offset.y
+            );
+        }
+
+        context.fillStyle = fontFg;
+        renderMultiLine(
+            context, text, x, y);
+
+        context.restore();
     }
 
     getTileFromCoord(coord: Point) {
@@ -296,4 +356,12 @@ function pixelColorString(
 
 function isGroundLikeTile(tile: Tile): boolean {
     return tile == Tile.GROUND;
+}
+
+function renderMultiLine(context: CanvasRenderingContext2D, text: string, x: number, y: number) {
+    const textSplit = text.split('\n');
+    const lineHeight = FONT_SIZE;
+    for (let i = 0; i < textSplit.length; i++) {
+        context.fillText(textSplit[i], x, y + i * lineHeight);
+    }
 }

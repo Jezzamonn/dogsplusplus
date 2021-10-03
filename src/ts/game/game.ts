@@ -14,7 +14,11 @@ const LEVELS = [
     "level1",
     "level2",
     "testlevel",
-]
+];
+
+const HINTS: {[key: string]: string} = {
+    'level1': 'Get the bone!\nArr'
+};
 
 export class Game {
 
@@ -90,7 +94,8 @@ export class Game {
     }
 
     loadLevel() {
-        this.level = new Level(this, this.getLevelImage());
+        const name = LEVELS[this.levelIndex];
+        this.level = new Level(this, name);
     }
 
     render(context: CanvasRenderingContext2D): void {
