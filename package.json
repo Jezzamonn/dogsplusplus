@@ -5,7 +5,7 @@
   "scripts": {
     "watch": "npm-watch",
     "reload": "reload -b -d build/client",
-    "static": "mkdir -p build/client/ && rsync -a --delete --exclude js/ --exclude css/ --exclude sprites/ src/static/ build/client/",
+    "static": "mkdir -p build/client/ && rsync -a --delete --exclude js/ --exclude css/ --exclude sprites/ --exclude music/ src/static/ build/client/",
     "sass": "mkdir -p build/client/css && sass src/scss/styles.scss build/client/css/styles.css",
     "sprites": "mkdir -p build/client/sprites && rsync -a --delete --exclude '*.aseprite' assets/ build/client/sprites/",
     "music": "mkdir -p build/client/music && rsync --delete -a --include='*.mp3' --exclude='*/' --exclude='*' music/ build/client/music/",
