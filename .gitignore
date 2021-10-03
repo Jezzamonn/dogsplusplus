@@ -3,4 +3,6 @@ build/
 .vscode/
 node_modules
 profiles/
-music/*.band
+
+music/
+!music/*.mp3

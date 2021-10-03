@@ -8,9 +8,9 @@
     "static": "mkdir -p build/client/ && rsync -a --delete --exclude js/ --exclude css/ --exclude sprites/ src/static/ build/client/",
     "sass": "mkdir -p build/client/css && sass src/scss/styles.scss build/client/css/styles.css",
     "sprites": "mkdir -p build/client/sprites && rsync -a --delete --exclude '*.aseprite' assets/ build/client/sprites/",
-    "music": "mkdir -p build/client/music && rsync --delete -a --exclude '*.band' music/ build/client/music/",
+    "music": "mkdir -p build/client/music && rsync --delete -a --include='*.mp3' --exclude='*/' --exclude='*' music/ build/client/music/",
     "webpack": "webpack",
-    "build": "npm-run-all --parallel webpack sass static sprites",
+    "build": "npm-run-all --parallel webpack sass static sprites music",
     "clean": "rm -rf build/*"
   },
   "watch": {
