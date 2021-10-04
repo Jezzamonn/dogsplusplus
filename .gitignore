@@ -1,4 +1,6 @@
-promo/
+promo/*
+!promo/publish/
+
 build/
 .vscode/
 node_modules
