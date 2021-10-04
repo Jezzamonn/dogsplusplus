@@ -4,7 +4,7 @@ import { PlayerController } from "./controller/player-controller";
 import { RandomController } from "./controller/random-controller";
 import { StandController } from "./controller/stand-controller";
 import { Dog } from "./entity/dog";
-import { Entity } from "./entity/entity";
+import { Entity, FacingDir } from "./entity/entity";
 import { Game } from "./game";
 import * as Images from "./../images";
 import { Bone } from "./entity/bone";
@@ -111,6 +111,7 @@ export class Level {
                     dog.midX = x * TILE_SIZE + 0.5 * (TILE_SIZE - 1);
                     dog.maxY = y * TILE_SIZE + 1 * (TILE_SIZE - 1);
                     dog.controller = new StandController();
+                    dog.facingDir = FacingDir.LEFT;
                     this.entities.push(dog);
 
                     if (colorString.startsWith("ff70")) {
@@ -213,7 +214,7 @@ export class Level {
         context.save();
 
         context.resetTransform();
-        context.fillStyle = "#3b7d6e";
+        context.fillStyle = "#295c46";
         context.fillRect(0, 0, context.canvas.width, context.canvas.height);
 
         this.game.camera.applyToContext(context, 0.5);

@@ -11,6 +11,7 @@ import { Keys } from "../keys";
 Sounds.loadSound({name: "forest", path: "music/"});
 
 const LEVELS = [
+    'demo-level',
     "intro",
     "dogs-on-head",
     "double-jump",
