@@ -3,6 +3,7 @@ import * as Aseprite from "./aseprite-js";
 import * as Images from "./images";
 import { Keys } from "./keys";
 
+let simulatedTimeMs: number;
 const timeStep = 1 / 60;
 
 let canvas: HTMLCanvasElement;
@@ -23,9 +24,25 @@ async function init() {
     requestAnimationFrame(doAnimationFrame);
 }
 
-function doAnimationFrame(): void {
-    // TODO: The fixed time step stuff.
-    fixedUpdate();
+function doAnimationFrame() {
+    if (simulatedTimeMs == null) {
+        simulatedTimeMs = Date.now();
+    }
+
+    let curTimeMs = Date.now();
+    let updateCount = 0;
+    while (simulatedTimeMs < curTimeMs) {
+        fixedUpdate();
+
+        simulatedTimeMs += timeStep * 1000;
+
+        updateCount++;
+        if (updateCount > 10) {
+            simulatedTimeMs = curTimeMs;
+            break;
+        }
+    }
+
     render();
 
     requestAnimationFrame(doAnimationFrame);
@@ -34,10 +51,11 @@ function doAnimationFrame(): void {
 function fixedUpdate() {
     try {
         game.update(timeStep);
-        Keys.resetFrame();
-    } catch (e) {
+    }
+    catch (e) {
         console.error(e);
     }
+    Keys.resetFrame();
 }
 
 function render() {
