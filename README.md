@@ -23,3 +23,10 @@ Dogs++ is a puzzle platformer about creating an unstable tower of dogs on your h
 ---
 
 Shouldn't be too hard, but if you get stuck, I put together a [playthrough](https://youtu.be/nOrJ-fCJ1ws) that shows you how to beat each level!
+
+---
+
+Post compo bug fixes
+
+- Remove variance in dog speed that I accidentally left in
+- Make the game run at a consistent speed on slower machines (by skipping frames)
