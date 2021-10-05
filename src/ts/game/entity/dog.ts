@@ -33,8 +33,6 @@ export class Dog extends Entity {
         this.w = physFromPx(10) - 5;
         this.h = physFromPx(10) - 1;
 
-        this.walkSpeed *= lerp(0.85, 1.3, rng());
-
         this.animCount = rng();
         this.hue = Math.floor(6 * rng()) / 6;
 
